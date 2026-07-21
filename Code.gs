@@ -92,7 +92,7 @@ function processForm(formData) {
     if (!sheet) throw new Error("Banco de dados não inicializado.");
     
     const timestamp = new Date();
-    const id = '#USG-' + Math.floor(10000 + Math.random() * 90000);
+    const id = '#PRC-' + Math.floor(10000 + Math.random() * 90000);
     
     // Mapeamento dinâmico de colunas para suportar planilhas antigas do usuário
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
