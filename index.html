@@ -58,6 +58,8 @@ h1, h2, h3 { font-family: var(--disp); line-height: 1.2; letter-spacing: -.01em;
 .iconbtn { background: none; border: 0; padding: 8px; border-radius: 10px; color: var(--mut); display: grid; place-items: center; transition: .15s; min-width: var(--tap); min-height: var(--tap); }
 .iconbtn:hover { background: var(--card); color: var(--ink); box-shadow: var(--sh); }
 .iconbtn svg { width: 20px; height: 20px; stroke-width: 2; }
+.chip { background: var(--card); border: 1px solid var(--line); padding: 4px 10px 4px 6px; border-radius: 99px; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; box-shadow: var(--sh); }
+.chip .av { width: 20px; height: 20px; border-radius: 50%; background: var(--pri-s); color: var(--pri); display: grid; place-items: center; font-size: 10px; }
 
 /* ---------- layout ---------- */
 main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) calc(90px + var(--sa-b)) max(18px, var(--sa-l)); }
@@ -70,9 +72,10 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 /* ---------- forms ---------- */
 .field { margin-bottom: 18px; }
 .field > label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
-.field input, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-height: 48px; background: #fff; transition: border-color .15s, box-shadow .15s; -webkit-appearance: none; }
+.field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-height: 48px; background: #fff; transition: border-color .15s, box-shadow .15s; -webkit-appearance: none; }
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2368766e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
 .field textarea { min-height: 100px; resize: vertical; }
-.field input:focus, .field textarea:focus { border-color: var(--pri); outline: none; box-shadow: 0 0 0 3px rgba(43, 108, 176, .15); }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--pri); outline: none; box-shadow: 0 0 0 3px rgba(43, 108, 176, .15); }
 
 /* ---------- buttons ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--pri); color: #fff; border: 1px solid var(--pri); border-radius: 12px; padding: 14px 20px; min-height: 52px; font-weight: 600; font-size: 15px; transition: .15s; width: 100%; }
@@ -81,12 +84,16 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 .btn.ghost { background: var(--paper); color: var(--ink); border-color: var(--line); margin-top: 10px; }
 .btn.ghost:hover { border-color: var(--mut); background: var(--card); }
-.btn.sm { min-height: 36px; padding: 6px 14px; border-radius: 8px; font-size: 13px; width: auto; }
+.btn.sm { min-height: 36px; padding: 6px 14px; border-radius: 8px; font-size: 13px; width: auto; margin-top: 0; }
 .btn.success { background: var(--green); border-color: var(--green); color: #fff; }
 .btn.success:hover { background: #2f855a; }
+.btn.danger { background: var(--red-s); border-color: var(--red-s); color: var(--red); }
+.btn.danger:hover { background: #fed7d7; }
 
 .spin { width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: sp .7s linear infinite; }
 @keyframes sp { to { transform: rotate(360deg); } }
+.loader-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh; color: var(--mut); gap: 16px; }
+.loader-wrap .spin { width: 32px; height: 32px; border-width: 3px; border-color: var(--line); border-top-color: var(--pri); }
 
 /* ---------- success ---------- */
 .done { text-align: center; padding: 38px 22px; }
@@ -95,23 +102,25 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .done .proto { font-family: var(--mono); font-size: clamp(24px, 7vw, 30px); font-weight: 700; letter-spacing: .04em; color: var(--pri-d); margin: 8px 0 16px; overflow-wrap: anywhere; }
 
 /* ---------- admin dashboard ---------- */
+.admin-nav { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 24px; gap: 20px; overflow-x: auto; scrollbar-width: none; }
+.admin-nav::-webkit-scrollbar { display: none; }
+.admin-nav button { background: none; border: 0; border-bottom: 3px solid transparent; font-weight: 600; padding: 12px 4px; color: var(--mut); font-size: 15px; white-space: nowrap; transition: .15s; }
+.admin-nav button:hover { color: var(--ink); }
+.admin-nav button.active { color: var(--pri); border-bottom-color: var(--pri); }
+
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 24px; }
 .stat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--sh); }
 .stat .v { font-family: var(--disp); font-weight: 700; font-size: clamp(24px, 6vw, 32px); line-height: 1.1; color: var(--pri); }
 .stat .l { color: var(--mut); font-size: 12.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; margin-top: 4px; }
 
-.appbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-.appbar h2 { font-size: clamp(19px, 5vw, 22px); }
-
-/* Tabs & Search */
 .controls { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-.tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tabs button { border: 0; background: none; padding: 8px 16px; min-height: var(--tap); border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--mut); white-space: nowrap; transition: .12s; }
 .tabs button.on { background: var(--ink); color: #fff; }
 .tabs button:hover:not(.on) { background: var(--card); }
 .search-bar { position: relative; width: 100%; }
-.search-bar input { padding-left: 40px; }
+.search-bar input { padding-left: 40px; margin-bottom:0; }
 .search-bar svg { position: absolute; left: 14px; top: 14px; width: 20px; height: 20px; color: var(--mut); }
 
 /* Badges */
@@ -120,18 +129,26 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .b-ok { background: var(--green-s); color: var(--green); }
 .b-neutral { background: var(--line); color: var(--mut); }
 
-/* pgrid (mobile friendly table) */
+/* pgrid (Coletas) */
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
 .pcard { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); display: flex; flex-direction: column; }
 .pcard:hover { border-color: var(--mut); transform: translateY(-2px); }
-.pcard .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.pcard .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .pcard .id { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--pri-d); }
 .pcard .date { font-size: 12px; color: var(--mut); margin-left: auto; }
 .pcard b { font-size: 16px; display: block; margin-bottom: 4px; color: var(--ink); }
-.pcard .info { color: var(--mut); font-size: 13.5px; display: flex; gap: 6px; align-items: center; margin-bottom: 12px; }
-.pcard .info svg { width: 14px; height: 14px; }
+.pcard .info { color: var(--mut); font-size: 13px; display: flex; gap: 6px; align-items: center; margin-bottom: 12px; }
+.pcard .info svg { width: 14px; height: 14px; flex-shrink: 0; }
 .pcard .desc { font-size: 14px; background: var(--paper); padding: 10px; border-radius: 8px; color: var(--ink); border: 1px solid var(--line); margin-bottom: 12px; }
 .pcard-actions { margin-top: auto; display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* Table (Logs e Setores) */
+.tbl-wrap { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; box-shadow: var(--sh); }
+.tbl { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+.tbl th { background: #fafafa; padding: 14px 16px; font-size: 12px; font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line); }
+.tbl td { padding: 14px 16px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl tr:hover td { background: #fafafa; }
 
 /* ---------- toast ---------- */
 #toast { position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 100px); background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px; opacity: 0; transition: .4s cubic-bezier(.4,0,.2,1); z-index: 1000; box-shadow: var(--sh-lift); pointer-events: none; }
@@ -153,7 +170,11 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
       </div>
     </a>
     <div class="top-right">
-      <button class="iconbtn" onclick="goLogin()" title="Acesso Administrativo">
+      <div id="ui-user" class="hide chip">
+        <div class="av">A</div>
+        Admin
+      </div>
+      <button id="ui-padlock" class="iconbtn" onclick="goLogin()" title="Acesso Administrativo">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
       </button>
     </div>
@@ -161,8 +182,14 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 </div>
 
 <main>
+  <!-- Loader / Boot -->
+  <div id="v-boot" class="loader-wrap">
+    <div class="spin"></div>
+    <div>Conectando ao servidor...</div>
+  </div>
+
   <!-- Formulário Público -->
-  <div id="v-pub">
+  <div id="v-pub" class="hide">
     <div class="narrow card">
       <div class="header-txt">
         <h2>Nova Coleta</h2>
@@ -176,6 +203,12 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         <div class="field">
           <label>Prontuário</label>
           <input type="text" id="i-pront" required autocomplete="off" inputmode="numeric" placeholder="Ex: 123456">
+        </div>
+        <div class="field">
+          <label>Setor</label>
+          <select id="i-setor" required>
+            <!-- Populated via JS -->
+          </select>
         </div>
         <div class="field">
           <label>Conselho Profissional</label>
@@ -231,40 +264,88 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 
   <!-- Admin Dashboard -->
   <div id="v-admin" class="hide">
-    <div class="appbar">
-      <h2>CRM Clínico</h2>
-      <button class="btn ghost sm" onclick="logout()">Encerrar Sessão</button>
+    <div class="admin-nav" id="admin-main-nav">
+      <button class="active" onclick="switchAdminView('coletas')">Coletas</button>
+      <button onclick="switchAdminView('setores')">Setores (Config)</button>
+      <button onclick="switchAdminView('logs')">Auditoria (Logs)</button>
+      <button onclick="logout()" style="margin-left:auto; color:var(--red)">Sair</button>
     </div>
     
-    <div class="stats">
-      <div class="stat">
-        <div class="v" id="st-total">-</div>
-        <div class="l">Total</div>
+    <!-- Sub-view: Coletas -->
+    <div id="av-coletas">
+      <div class="stats">
+        <div class="stat">
+          <div class="v" id="st-total">-</div>
+          <div class="l">Total</div>
+        </div>
+        <div class="stat">
+          <div class="v" id="st-pendentes" style="color:var(--amber)">-</div>
+          <div class="l">Pendentes</div>
+        </div>
+        <div class="stat">
+          <div class="v" id="st-concluidas" style="color:var(--green)">-</div>
+          <div class="l">Concluídas Hoje</div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="v" id="st-pendentes" style="color:var(--amber)">-</div>
-        <div class="l">Pendentes</div>
-      </div>
-      <div class="stat">
-        <div class="v" id="st-concluidas" style="color:var(--green)">-</div>
-        <div class="l">Concluídas Hoje</div>
-      </div>
-    </div>
 
-    <div class="controls">
-      <div class="search-bar">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="text" id="i-search" class="field input" style="margin:0; width:100%" placeholder="Buscar paciente ou ID..." oninput="filterAdmin()">
+      <div class="controls">
+        <div class="search-bar">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="i-search" class="field input" placeholder="Buscar paciente, setor ou ID..." oninput="filterAdminColetas()">
+        </div>
+        
+        <div class="tabs" id="admin-tabs">
+          <button class="on" onclick="setTab('Pendentes')">Pendentes</button>
+          <button onclick="setTab('Concluído')">Concluídas</button>
+          <button onclick="setTab('Todas')">Todas</button>
+        </div>
+      </div>
+
+      <div id="admin-content-coletas"></div>
+    </div>
+    
+    <!-- Sub-view: Setores -->
+    <div id="av-setores" class="hide">
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="margin-bottom: 16px;">Adicionar Novo Setor</h3>
+        <form onsubmit="handleAddSetor(event)" style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+          <div class="field" style="flex:1; min-width:200px; margin:0;">
+            <input type="text" id="i-new-setor" required placeholder="Ex: UTI Pediátrica">
+          </div>
+          <button type="submit" id="btn-add-setor" class="btn" style="width:auto; min-width:120px;">Adicionar</button>
+        </form>
       </div>
       
-      <div class="tabs" id="admin-tabs">
-        <button class="on" onclick="setTab('Pendentes')">Pendentes</button>
-        <button onclick="setTab('Concluído')">Concluídas</button>
-        <button onclick="setTab('Todas')">Todas</button>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome do Setor</th>
+              <th>Cadastrado Em</th>
+              <th style="width:100px;">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-setores"></tbody>
+        </table>
       </div>
     </div>
-
-    <div id="admin-content"></div>
+    
+    <!-- Sub-view: Logs -->
+    <div id="av-logs" class="hide">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Data e Hora</th>
+              <th>Ação / Evento</th>
+              <th>Detalhes</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-logs"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
 </main>
@@ -274,9 +355,47 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 <script>
 const $ = q => document.querySelector(q);
 const $$ = q => document.querySelectorAll(q);
-const views = ['v-pub', 'v-done', 'v-login', 'v-admin'];
+
+// --- State ---
+const S = { 
+  adminPass: null,
+  coletas: [],
+  setores: [],
+  logs: [],
+  tab: 'Pendentes',
+  search: ''
+};
+
+// --- RPC Wrapper ---
+function rpc(func, ...args) {
+  return new Promise((resolve, reject) => {
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(reject)
+      [func](...args);
+  });
+}
+
+// --- Init & Boot ---
+async function bootApp() {
+  try {
+    const res = await rpc('getBootData');
+    if (res.ok) {
+      const sel = $('#i-setor');
+      sel.innerHTML = '<option value="" disabled selected>Selecione um Setor</option>' + 
+                      res.setores.map(s => `<option value="${s}">${s}</option>`).join('');
+      showView('v-pub');
+    } else {
+      $('#v-boot').innerHTML = '<b>Erro de Inicialização</b><br>Tente recarregar a página.';
+    }
+  } catch(e) {
+    $('#v-boot').innerHTML = '<b>Falha na comunicação</b><br>Verifique sua internet.';
+  }
+}
+bootApp();
 
 // --- UI Navigation ---
+const views = ['v-boot', 'v-pub', 'v-done', 'v-login', 'v-admin'];
 function showView(vid) {
   views.forEach(v => $('#'+v).classList.add('hide'));
   $('#'+vid).classList.remove('hide');
@@ -300,6 +419,8 @@ function goLogin() {
 
 function logout() {
   S.adminPass = null;
+  $('#ui-user').classList.add('hide');
+  $('#ui-padlock').classList.remove('hide');
   goHome();
 }
 
@@ -309,24 +430,6 @@ function toast(msg, err) {
   t.className = err ? 'err show' : 'show';
   setTimeout(() => t.className = '', 3000);
 }
-
-// --- RPC Wrapper ---
-function rpc(func, ...args) {
-  return new Promise((resolve, reject) => {
-    google.script.run
-      .withSuccessHandler(res => resolve(res))
-      .withFailureHandler(err => reject(err))
-      [func](...args);
-  });
-}
-
-// --- State ---
-const S = { 
-  adminPass: null,
-  rawData: [],
-  tab: 'Pendentes',
-  search: ''
-};
 
 // --- Form Logic ---
 async function submitColeta(e) {
@@ -339,6 +442,7 @@ async function submitColeta(e) {
   const data = {
     nome: $('#i-nome').value,
     prontuario: $('#i-pront').value,
+    setor: $('#i-setor').value,
     conselho: $('#i-cons').value,
     justificativa: $('#i-just').value
   };
@@ -379,11 +483,17 @@ async function refreshAdmin(fromLogin = false) {
   }
 
   try {
-    const res = await rpc('getRegistros', S.adminPass);
+    const res = await rpc('getAdminData', S.adminPass);
     if(res.ok) {
       if(fromLogin) soundEffects.success();
-      S.rawData = res.data;
-      filterAdmin();
+      S.coletas = res.coletas || [];
+      S.setores = res.setores || [];
+      S.logs = res.logs || [];
+      
+      $('#ui-user').classList.remove('hide');
+      $('#ui-padlock').classList.add('hide');
+      
+      switchAdminView('coletas');
       showView('v-admin');
     } else {
       if(fromLogin) {
@@ -407,25 +517,38 @@ async function refreshAdmin(fromLogin = false) {
   }
 }
 
+function switchAdminView(v) {
+  $$('#admin-main-nav button').forEach(b => b.classList.remove('active'));
+  $$('#admin-main-nav button')[v==='coletas'?0:v==='setores'?1:2].classList.add('active');
+  
+  $('#av-coletas').classList.add('hide');
+  $('#av-setores').classList.add('hide');
+  $('#av-logs').classList.add('hide');
+  
+  $('#av-' + v).classList.remove('hide');
+  
+  if (v === 'coletas') filterAdminColetas();
+  if (v === 'setores') renderSetores();
+  if (v === 'logs') renderLogs();
+}
+
+// -- Coletas Logic
 function setTab(tabName) {
   S.tab = tabName;
   $$('#admin-tabs button').forEach(b => {
     b.classList.remove('on');
     if(b.textContent.trim() === (tabName === 'Concluído' ? 'Concluídas' : tabName)) b.classList.add('on');
   });
-  filterAdmin();
+  filterAdminColetas();
 }
 
-function filterAdmin() {
+function filterAdminColetas() {
   S.search = $('#i-search').value.toLowerCase();
   
-  if(!S.rawData || S.rawData.length <= 1) {
+  if(!S.coletas || S.coletas.length <= 1) {
     renderAdminCards([]);
     return;
   }
-  
-  const headers = S.rawData[0]; // [ID, Data, Paciente, Prontuario, Conselho, Justificativa, Status]
-  // We assume Status is at index 6, but fallback to Pending if undefined
   
   let filtered = [];
   let statTotal = 0;
@@ -433,32 +556,25 @@ function filterAdmin() {
   let statConcHoje = 0;
   const todayStr = new Date().toLocaleDateString('pt-BR');
 
-  for(let i = 1; i < S.rawData.length; i++) {
-    const r = S.rawData[i];
+  for(let i = 1; i < S.coletas.length; i++) {
+    const r = S.coletas[i]; // [ID, Data, Paciente, Pront, Setor, Cons, Just, Status]
     statTotal++;
     
-    let status = r[6] || 'Pendente';
+    let status = r[7] || 'Pendente';
     if(status === 'Pendente') statPend++;
     
     let dateStr = r[1];
-    if(typeof dateStr.toLocaleDateString === 'function') {
-      dateStr = dateStr.toLocaleDateString('pt-BR');
-    } else {
-      dateStr = new Date(r[1]).toLocaleDateString('pt-BR');
-    }
+    if(typeof dateStr.toLocaleDateString === 'function') dateStr = dateStr.toLocaleDateString('pt-BR');
+    else dateStr = new Date(r[1]).toLocaleDateString('pt-BR');
     
     if(status === 'Concluído' && dateStr === todayStr) statConcHoje++;
     
-    // Tab Filter
     if(S.tab !== 'Todas' && status !== S.tab) continue;
     
-    // Search Filter
     if(S.search) {
-      const matchName = (r[2]||'').toLowerCase().includes(S.search);
-      const matchId = (r[0]||'').toLowerCase().includes(S.search);
-      if(!matchName && !matchId) continue;
+      const txt = (r[2]+' '+r[0]+' '+r[4]).toLowerCase();
+      if(!txt.includes(S.search)) continue;
     }
-    
     filtered.push(r);
   }
   
@@ -471,92 +587,150 @@ function filterAdmin() {
 
 function renderAdminCards(rows) {
   if(rows.length === 0) {
-    $('#admin-content').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhum registro encontrado para este filtro.</div>';
+    $('#admin-content-coletas').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhum registro encontrado.</div>';
     return;
   }
-  
   let html = '<div class="pgrid">';
-  
-  // Revert order (newest first)
   for(let i = rows.length - 1; i >= 0; i--) {
     const r = rows[i];
-    const id = r[0];
-    const rawDate = r[1];
-    const nome = r[2];
-    const pront = r[3];
-    const cons = r[4];
-    const just = r[5];
-    const status = r[6] || 'Pendente';
+    const status = r[7] || 'Pendente';
+    let badgeClass = status === 'Pendente' ? 'b-warn' : (status === 'Concluído' ? 'b-ok' : 'b-neutral');
     
-    let timeStr = '';
-    let dateStr = '';
-    try {
-      const d = new Date(rawDate);
-      dateStr = d.toLocaleDateString('pt-BR');
-      timeStr = d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-    }catch(e){}
-    
-    let badgeClass = 'b-neutral';
-    if(status === 'Pendente') badgeClass = 'b-warn';
-    if(status === 'Concluído') badgeClass = 'b-ok';
+    let d = new Date(r[1]);
+    let dateStr = d.toLocaleDateString('pt-BR');
+    let timeStr = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
 
     html += `
-      <div class="pcard" id="card-${id.replace('#','')}">
+      <div class="pcard">
         <div class="top">
-          <span class="id">${id}</span>
+          <span class="id">${r[0]}</span>
           <span class="badge ${badgeClass}">${status}</span>
           <span class="date">${dateStr} às ${timeStr}</span>
         </div>
-        <b>${nome}</b>
+        <b>${r[2]}</b>
         <div class="info">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
-          Prontuário: ${pront}
+          ${r[3]} • ${r[4]}
         </div>
-        <div class="desc">${just}</div>
-        <div style="font-size:11px; color:var(--mut); text-transform:uppercase; font-weight:600; letter-spacing:0.04em">Conselho: ${cons}</div>
-        
+        <div class="desc">${r[6]}</div>
+        <div style="font-size:11px; color:var(--mut); font-weight:600; text-transform:uppercase;">📝 Conselho: ${r[5]}</div>
         ${status === 'Pendente' ? `
           <div class="pcard-actions">
-            <button class="btn sm success" onclick="changeStatus('${id}', 'Concluído', this)">✔ Concluir</button>
-            <button class="btn sm ghost" onclick="changeStatus('${id}', 'Cancelado', this)">Cancelar</button>
+            <button class="btn sm success" onclick="changeStatus('${r[0]}', 'Concluído', this)">✔ Concluir</button>
+            <button class="btn sm ghost" onclick="changeStatus('${r[0]}', 'Cancelado', this)">Cancelar</button>
           </div>
         ` : ''}
       </div>
     `;
   }
   html += '</div>';
-
-  $('#admin-content').innerHTML = html;
+  $('#admin-content-coletas').innerHTML = html;
 }
 
 async function changeStatus(id, newStatus, btnEl) {
-  if(!confirm(`Tem certeza que deseja marcar ${id} como ${newStatus}?`)) return;
-  
-  const originalHtml = btnEl.innerHTML;
-  btnEl.innerHTML = '<div class="spin"></div>';
-  btnEl.disabled = true;
-
+  if(!confirm(`Marcar ${id} como ${newStatus}?`)) return;
+  const original = btnEl.innerHTML;
+  btnEl.innerHTML = '<div class="spin"></div>'; btnEl.disabled = true;
   try {
     const res = await rpc('updateStatus', { id, novoStatus: newStatus, senha: S.adminPass });
     if(res.ok) {
-      toast(`Registro ${id} atualizado para ${newStatus}`);
+      toast(`Atualizado para ${newStatus}`);
       soundEffects.success();
-      // Optimistic update locally
-      const row = S.rawData.find(r => r[0] === id);
-      if(row) row[6] = newStatus;
-      filterAdmin(); 
+      const row = S.coletas.find(r => r[0] === id);
+      if(row) row[7] = newStatus;
+      S.logs.push([new Date().toLocaleString(), 'ATUALIZAR_STATUS', `Coleta ${id} alterada para ${newStatus}`]);
+      filterAdminColetas();
     } else {
-      soundEffects.error();
-      toast(res.erro || 'Erro ao atualizar', true);
-      btnEl.disabled = false;
-      btnEl.innerHTML = originalHtml;
+      toast(res.erro, true); soundEffects.error();
     }
-  } catch (err) {
-    soundEffects.error();
-    toast('Falha na comunicação', true);
-    btnEl.disabled = false;
-    btnEl.innerHTML = originalHtml;
+  } catch (err) { toast('Falha na rede', true); soundEffects.error(); }
+  finally { btnEl.disabled = false; btnEl.innerHTML = original; }
+}
+
+// -- Setores Logic
+function renderSetores() {
+  if (S.setores.length <= 1) {
+    $('#tbl-setores').innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--mut);">Nenhum setor cadastrado.</td></tr>';
+    return;
   }
+  let html = '';
+  for (let i = S.setores.length - 1; i >= 1; i--) {
+    const s = S.setores[i]; // [ID, Nome, Data]
+    let dateStr = new Date(s[2]).toLocaleDateString('pt-BR');
+    html += `
+      <tr>
+        <td><span class="badge b-neutral" style="font-family:var(--mono)">${s[0]}</span></td>
+        <td><b>${s[1]}</b></td>
+        <td>${dateStr}</td>
+        <td><button class="btn sm danger" onclick="delSetor('${s[0]}', '${s[1]}', this)">Excluir</button></td>
+      </tr>
+    `;
+  }
+  $('#tbl-setores').innerHTML = html;
+}
+
+async function handleAddSetor(e) {
+  e.preventDefault();
+  const inp = $('#i-new-setor');
+  const btn = $('#btn-add-setor');
+  const val = inp.value.trim();
+  if(!val) return;
+  
+  btn.disabled = true; btn.innerHTML = '<div class="spin"></div>';
+  try {
+    const res = await rpc('addSetor', { nome: val, senha: S.adminPass });
+    if (res.ok) {
+      toast("Setor adicionado."); soundEffects.success();
+      inp.value = '';
+      if(S.setores.length === 0) S.setores = [["ID","Nome","Data"]];
+      S.setores.push(res.novoSetor);
+      S.logs.push([new Date().toLocaleString(), 'CRIAR_SETOR', `Novo setor cadastrado: ${val}`]);
+      renderSetores();
+    } else {
+      toast(res.erro, true); soundEffects.error();
+    }
+  } catch(err) { toast('Erro na rede', true); soundEffects.error(); }
+  finally { btn.disabled = false; btn.innerHTML = 'Adicionar'; }
+}
+
+async function delSetor(id, nome, btnEl) {
+  if(!confirm(`Deseja excluir o setor "${nome}"?\nIsso não apagará as coletas já feitas com ele, apenas removerá do formulário.`)) return;
+  const original = btnEl.innerHTML;
+  btnEl.disabled = true; btnEl.innerHTML = '<div class="spin"></div>';
+  try {
+    const res = await rpc('deleteSetor', { id, senha: S.adminPass });
+    if(res.ok) {
+      toast("Setor excluído."); soundEffects.success();
+      S.setores = S.setores.filter(s => s[0] !== id);
+      S.logs.push([new Date().toLocaleString(), 'EXCLUIR_SETOR', `Setor excluído: ${nome}`]);
+      renderSetores();
+    } else {
+      toast(res.erro, true); soundEffects.error();
+      btnEl.disabled = false; btnEl.innerHTML = original;
+    }
+  } catch(err) { toast('Erro na rede', true); soundEffects.error(); btnEl.disabled = false; btnEl.innerHTML = original; }
+}
+
+// -- Logs Logic
+function renderLogs() {
+  if (S.logs.length <= 1) {
+    $('#tbl-logs').innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--mut);">Sem registros no log.</td></tr>';
+    return;
+  }
+  let html = '';
+  // Revert to show newest first
+  for (let i = S.logs.length - 1; i >= 1; i--) {
+    const l = S.logs[i]; // [Data, Acao, Detalhes]
+    let dStr = new Date(l[0]).toLocaleString('pt-BR');
+    html += `
+      <tr>
+        <td style="white-space:nowrap; color:var(--mut); font-size:13px;">${dStr}</td>
+        <td><span class="badge b-neutral">${l[1]}</span></td>
+        <td>${l[2]}</td>
+      </tr>
+    `;
+  }
+  $('#tbl-logs').innerHTML = html;
 }
 
 // --- Audio ---
@@ -579,7 +753,6 @@ function playTone(freq, type, duration, vol) {
   osc.stop(audioCtx.currentTime + duration);
 }
 const soundEffects = {
-  focus: () => playTone(800, 'sine', 0.1, 0.05),
   submit: () => {
     playTone(440, 'triangle', 0.1, 0.1);
     setTimeout(() => playTone(554, 'triangle', 0.2, 0.1), 100);
