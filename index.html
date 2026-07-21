@@ -23,6 +23,8 @@
   --red-s: #fce8e8;
   --green: #38a169;
   --green-s: #e6f6ec;
+  --amber: #d69e2e;
+  --amber-s: #fefcbf;
   --r: 16px; 
   --sh: 0 1px 2px rgba(29,42,36,.06), 0 4px 14px rgba(29,42,36,.05);
   --sh-lift: 0 6px 16px rgba(29,42,36,.10), 0 2px 5px rgba(29,42,36,.06);
@@ -79,6 +81,9 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 .btn.ghost { background: var(--paper); color: var(--ink); border-color: var(--line); margin-top: 10px; }
 .btn.ghost:hover { border-color: var(--mut); background: var(--card); }
+.btn.sm { min-height: 36px; padding: 6px 14px; border-radius: 8px; font-size: 13px; width: auto; }
+.btn.success { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.success:hover { background: #2f855a; }
 
 .spin { width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: sp .7s linear infinite; }
 @keyframes sp { to { transform: rotate(360deg); } }
@@ -90,18 +95,34 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .done .proto { font-family: var(--mono); font-size: clamp(24px, 7vw, 30px); font-weight: 700; letter-spacing: .04em; color: var(--pri-d); margin: 8px 0 16px; overflow-wrap: anywhere; }
 
 /* ---------- admin dashboard ---------- */
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 24px; }
 .stat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--sh); }
 .stat .v { font-family: var(--disp); font-weight: 700; font-size: clamp(24px, 6vw, 32px); line-height: 1.1; color: var(--pri); }
 .stat .l { color: var(--mut); font-size: 12.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; margin-top: 4px; }
 
-.appbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.appbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
 .appbar h2 { font-size: clamp(19px, 5vw, 22px); }
-.appbar button { font-size: 13.5px; padding: 6px 12px; min-height: 36px; border-radius: 8px; }
+
+/* Tabs & Search */
+.controls { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { border: 0; background: none; padding: 8px 16px; min-height: var(--tap); border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--mut); white-space: nowrap; transition: .12s; }
+.tabs button.on { background: var(--ink); color: #fff; }
+.tabs button:hover:not(.on) { background: var(--card); }
+.search-bar { position: relative; width: 100%; }
+.search-bar input { padding-left: 40px; }
+.search-bar svg { position: absolute; left: 14px; top: 14px; width: 20px; height: 20px; color: var(--mut); }
+
+/* Badges */
+.badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.b-warn { background: var(--amber-s); color: var(--amber); }
+.b-ok { background: var(--green-s); color: var(--green); }
+.b-neutral { background: var(--line); color: var(--mut); }
 
 /* pgrid (mobile friendly table) */
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
-.pcard { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); }
+.pcard { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); display: flex; flex-direction: column; }
 .pcard:hover { border-color: var(--mut); transform: translateY(-2px); }
 .pcard .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .pcard .id { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--pri-d); }
@@ -109,7 +130,8 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .pcard b { font-size: 16px; display: block; margin-bottom: 4px; color: var(--ink); }
 .pcard .info { color: var(--mut); font-size: 13.5px; display: flex; gap: 6px; align-items: center; margin-bottom: 12px; }
 .pcard .info svg { width: 14px; height: 14px; }
-.pcard .desc { font-size: 14px; background: var(--paper); padding: 10px; border-radius: 8px; color: var(--ink); border: 1px solid var(--line); }
+.pcard .desc { font-size: 14px; background: var(--paper); padding: 10px; border-radius: 8px; color: var(--ink); border: 1px solid var(--line); margin-bottom: 12px; }
+.pcard-actions { margin-top: auto; display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--line); padding-top: 12px; }
 
 /* ---------- toast ---------- */
 #toast { position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 100px); background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px; opacity: 0; transition: .4s cubic-bezier(.4,0,.2,1); z-index: 1000; box-shadow: var(--sh-lift); pointer-events: none; }
@@ -206,18 +228,35 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
   <!-- Admin Dashboard -->
   <div id="v-admin" class="hide">
     <div class="appbar">
-      <h2>Painel Administrativo</h2>
+      <h2>CRM Clínico</h2>
       <button class="btn ghost sm" onclick="logout()">Encerrar Sessão</button>
     </div>
     
     <div class="stats">
       <div class="stat">
         <div class="v" id="st-total">-</div>
-        <div class="l">Total de Registros</div>
+        <div class="l">Total</div>
       </div>
       <div class="stat">
-        <div class="v" id="st-hoje">-</div>
-        <div class="l">Coletas Hoje</div>
+        <div class="v" id="st-pendentes" style="color:var(--amber)">-</div>
+        <div class="l">Pendentes</div>
+      </div>
+      <div class="stat">
+        <div class="v" id="st-concluidas" style="color:var(--green)">-</div>
+        <div class="l">Concluídas Hoje</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-bar">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="i-search" class="field input" style="margin:0; width:100%" placeholder="Buscar paciente ou ID..." oninput="filterAdmin()">
+      </div>
+      
+      <div class="tabs" id="admin-tabs">
+        <button class="on" onclick="setTab('Pendentes')">Pendentes</button>
+        <button onclick="setTab('Concluído')">Concluídas</button>
+        <button onclick="setTab('Todas')">Todas</button>
       </div>
     </div>
 
@@ -230,6 +269,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 
 <script>
 const $ = q => document.querySelector(q);
+const $$ = q => document.querySelectorAll(q);
 const views = ['v-pub', 'v-done', 'v-login', 'v-admin'];
 
 // --- UI Navigation ---
@@ -245,9 +285,13 @@ function goHome() {
 }
 
 function goLogin() {
-  $('#i-pass').value = '';
-  showView('v-login');
-  setTimeout(() => $('#i-pass').focus(), 100);
+  if (S.adminPass) {
+    refreshAdmin();
+  } else {
+    $('#i-pass').value = '';
+    showView('v-login');
+    setTimeout(() => $('#i-pass').focus(), 100);
+  }
 }
 
 function logout() {
@@ -262,7 +306,7 @@ function toast(msg, err) {
   setTimeout(() => t.className = '', 3000);
 }
 
-// --- RPC Wrapper (Diet-Request Pattern) ---
+// --- RPC Wrapper ---
 function rpc(func, ...args) {
   return new Promise((resolve, reject) => {
     google.script.run
@@ -273,14 +317,20 @@ function rpc(func, ...args) {
 }
 
 // --- State ---
-const S = { adminPass: null };
+const S = { 
+  adminPass: null,
+  rawData: [],
+  tab: 'Pendentes',
+  search: ''
+};
 
-// --- Logic ---
+// --- Form Logic ---
 async function submitColeta(e) {
   e.preventDefault();
   const btn = $('#btn-coleta');
   btn.disabled = true;
   btn.innerHTML = '<div class="spin"></div>';
+  soundEffects.submit();
 
   const data = {
     nome: $('#i-nome').value,
@@ -293,11 +343,14 @@ async function submitColeta(e) {
     const res = await rpc('processForm', data);
     if(res.ok) {
       $('#done-id').textContent = res.id;
+      soundEffects.success();
       showView('v-done');
     } else {
+      soundEffects.error();
       toast(res.erro || 'Erro ao registrar', true);
     }
   } catch(err) {
+    soundEffects.error();
     toast('Falha na comunicação', true);
   } finally {
     btn.disabled = false;
@@ -305,86 +358,240 @@ async function submitColeta(e) {
   }
 }
 
+// --- Admin Logic ---
 async function submitLogin(e) {
   e.preventDefault();
-  const btn = $('#btn-login');
   const pass = $('#i-pass').value;
-  
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spin"></div>';
+  S.adminPass = pass;
+  soundEffects.submit();
+  await refreshAdmin(true);
+}
+
+async function refreshAdmin(fromLogin = false) {
+  const btn = fromLogin ? $('#btn-login') : null;
+  if(btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spin"></div>';
+  }
 
   try {
-    const res = await rpc('getRegistros', pass);
+    const res = await rpc('getRegistros', S.adminPass);
     if(res.ok) {
-      S.adminPass = pass;
-      renderAdmin(res.data);
+      if(fromLogin) soundEffects.success();
+      S.rawData = res.data;
+      filterAdmin();
       showView('v-admin');
     } else {
-      toast(res.erro || 'Senha incorreta', true);
-      $('#i-pass').value = '';
-      $('#i-pass').focus();
+      if(fromLogin) {
+        soundEffects.error();
+        toast(res.erro || 'Senha incorreta', true);
+        $('#i-pass').value = '';
+        $('#i-pass').focus();
+        S.adminPass = null;
+      }
     }
   } catch(err) {
-    toast('Falha na comunicação', true);
+    if(fromLogin) {
+      soundEffects.error();
+      toast('Falha na comunicação', true);
+    }
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Acessar Painel';
+    if(btn) {
+      btn.disabled = false;
+      btn.innerHTML = 'Acessar Painel';
+    }
   }
 }
 
-function renderAdmin(rows) {
-  if(!rows || rows.length <= 1) {
-    $('#st-total').textContent = '0';
-    $('#st-hoje').textContent = '0';
-    $('#admin-content').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhuma coleta registrada ainda.</div>';
+function setTab(tabName) {
+  S.tab = tabName;
+  $$('#admin-tabs button').forEach(b => {
+    b.classList.remove('on');
+    if(b.textContent.trim() === (tabName === 'Concluído' ? 'Concluídas' : tabName)) b.classList.add('on');
+  });
+  filterAdmin();
+}
+
+function filterAdmin() {
+  S.search = $('#i-search').value.toLowerCase();
+  
+  if(!S.rawData || S.rawData.length <= 1) {
+    renderAdminCards([]);
     return;
   }
   
-  const total = rows.length - 1; // remove cabecalho
-  let hoje = 0;
+  const headers = S.rawData[0]; // [ID, Data, Paciente, Prontuario, Conselho, Justificativa, Status]
+  // We assume Status is at index 6, but fallback to Pending if undefined
+  
+  let filtered = [];
+  let statTotal = 0;
+  let statPend = 0;
+  let statConcHoje = 0;
   const todayStr = new Date().toLocaleDateString('pt-BR');
-  
-  let html = '<div class="pgrid">';
-  
-  // iterar de trás pra frente (mais recentes primeiro)
-  for(let i = rows.length - 1; i > 0; i--) {
-    const r = rows[i];
-    // r[0]: ID, r[1]: Data, r[2]: Nome, r[3]: Prontuario, r[4]: Conselho, r[5]: Justificativa
+
+  for(let i = 1; i < S.rawData.length; i++) {
+    const r = S.rawData[i];
+    statTotal++;
+    
+    let status = r[6] || 'Pendente';
+    if(status === 'Pendente') statPend++;
     
     let dateStr = r[1];
     if(typeof dateStr.toLocaleDateString === 'function') {
       dateStr = dateStr.toLocaleDateString('pt-BR');
     } else {
-      // Se vier string do backend, tenta extrair só a data local
       dateStr = new Date(r[1]).toLocaleDateString('pt-BR');
     }
     
-    if(dateStr === todayStr) hoje++;
+    if(status === 'Concluído' && dateStr === todayStr) statConcHoje++;
     
-    const timeStr = new Date(r[1]).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+    // Tab Filter
+    if(S.tab !== 'Todas' && status !== S.tab) continue;
+    
+    // Search Filter
+    if(S.search) {
+      const matchName = (r[2]||'').toLowerCase().includes(S.search);
+      const matchId = (r[0]||'').toLowerCase().includes(S.search);
+      if(!matchName && !matchId) continue;
+    }
+    
+    filtered.push(r);
+  }
+  
+  $('#st-total').textContent = statTotal;
+  $('#st-pendentes').textContent = statPend;
+  $('#st-concluidas').textContent = statConcHoje;
+  
+  renderAdminCards(filtered);
+}
+
+function renderAdminCards(rows) {
+  if(rows.length === 0) {
+    $('#admin-content').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhum registro encontrado para este filtro.</div>';
+    return;
+  }
+  
+  let html = '<div class="pgrid">';
+  
+  // Revert order (newest first)
+  for(let i = rows.length - 1; i >= 0; i--) {
+    const r = rows[i];
+    const id = r[0];
+    const rawDate = r[1];
+    const nome = r[2];
+    const pront = r[3];
+    const cons = r[4];
+    const just = r[5];
+    const status = r[6] || 'Pendente';
+    
+    let timeStr = '';
+    let dateStr = '';
+    try {
+      const d = new Date(rawDate);
+      dateStr = d.toLocaleDateString('pt-BR');
+      timeStr = d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+    }catch(e){}
+    
+    let badgeClass = 'b-neutral';
+    if(status === 'Pendente') badgeClass = 'b-warn';
+    if(status === 'Concluído') badgeClass = 'b-ok';
 
     html += `
-      <div class="pcard">
+      <div class="pcard" id="card-${id.replace('#','')}">
         <div class="top">
-          <span class="id">${r[0]}</span>
+          <span class="id">${id}</span>
+          <span class="badge ${badgeClass}">${status}</span>
           <span class="date">${dateStr} às ${timeStr}</span>
         </div>
-        <b>${r[2]}</b>
+        <b>${nome}</b>
         <div class="info">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
-          Prontuário: ${r[3]}
+          Prontuário: ${pront}
         </div>
-        <div class="desc">${r[5]}</div>
-        <div style="margin-top:10px; font-size:11px; color:var(--mut); text-transform:uppercase; font-weight:600; letter-spacing:0.04em">Conselho: ${r[4]}</div>
+        <div class="desc">${just}</div>
+        <div style="font-size:11px; color:var(--mut); text-transform:uppercase; font-weight:600; letter-spacing:0.04em">Conselho: ${cons}</div>
+        
+        ${status === 'Pendente' ? `
+          <div class="pcard-actions">
+            <button class="btn sm success" onclick="changeStatus('${id}', 'Concluído', this)">✔ Concluir</button>
+            <button class="btn sm ghost" onclick="changeStatus('${id}', 'Cancelado', this)">Cancelar</button>
+          </div>
+        ` : ''}
       </div>
     `;
   }
   html += '</div>';
 
-  $('#st-total').textContent = total;
-  $('#st-hoje').textContent = hoje;
   $('#admin-content').innerHTML = html;
 }
+
+async function changeStatus(id, newStatus, btnEl) {
+  if(!confirm(`Tem certeza que deseja marcar ${id} como ${newStatus}?`)) return;
+  
+  const originalHtml = btnEl.innerHTML;
+  btnEl.innerHTML = '<div class="spin"></div>';
+  btnEl.disabled = true;
+
+  try {
+    const res = await rpc('updateStatus', { id, novoStatus: newStatus, senha: S.adminPass });
+    if(res.ok) {
+      toast(`Registro ${id} atualizado para ${newStatus}`);
+      soundEffects.success();
+      // Optimistic update locally
+      const row = S.rawData.find(r => r[0] === id);
+      if(row) row[6] = newStatus;
+      filterAdmin(); 
+    } else {
+      soundEffects.error();
+      toast(res.erro || 'Erro ao atualizar', true);
+      btnEl.disabled = false;
+      btnEl.innerHTML = originalHtml;
+    }
+  } catch (err) {
+    soundEffects.error();
+    toast('Falha na comunicação', true);
+    btnEl.disabled = false;
+    btnEl.innerHTML = originalHtml;
+  }
+}
+
+// --- Audio ---
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playTone(freq, type, duration, vol) {
+  if(!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+const soundEffects = {
+  focus: () => playTone(800, 'sine', 0.1, 0.05),
+  submit: () => {
+    playTone(440, 'triangle', 0.1, 0.1);
+    setTimeout(() => playTone(554, 'triangle', 0.2, 0.1), 100);
+  },
+  success: () => {
+    playTone(523.25, 'sine', 0.1, 0.1); 
+    setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 150); 
+    setTimeout(() => playTone(783.99, 'sine', 0.3, 0.1), 300); 
+  },
+  error: () => {
+    playTone(300, 'square', 0.2, 0.1);
+    setTimeout(() => playTone(250, 'square', 0.3, 0.1), 200);
+  }
+};
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
 </script>
 </body>
 </html>
