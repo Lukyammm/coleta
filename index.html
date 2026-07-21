@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Coleta de Dados</title>
+  
+  <style>
+    /* Reset & Typography */
+    :root {
+      --bg-color: #f0f4f8;
+      --card-bg: rgba(255, 255, 255, 0.7);
+      --card-border: rgba(255, 255, 255, 0.5);
+      --text-main: #2d3748;
+      --text-muted: #718096;
+      --primary: #3182ce;
+      --primary-hover: #2b6cb0;
+      --success: #38a169;
+      --error: #e53e3e;
+      --focus-ring: rgba(49, 130, 206, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+      overflow-x: hidden;
+    }
+
+    /* Glassmorphism Container */
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      transform: translateY(0);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      transition: color 0.3s ease;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      color: var(--text-main);
+      transition: all 0.3s ease;
+      -webkit-appearance: none;
+      touch-action: manipulation;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--focus-ring);
+      background: #ffffff;
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      -webkit-appearance: none;
+      touch-action: manipulation;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 8px rgba(49, 130, 206, 0.3);
+    }
+
+    button:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: env(safe-area-inset-bottom, 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--success);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1000;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(-20px);
+      opacity: 1;
+    }
+    
+    .toast.error {
+      background: var(--error);
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container" id="app-container">
+    <div class="header">
+      <h1>Registro de Coleta</h1>
+      <p>Preencha os dados do procedimento</p>
+    </div>
+
+    <form id="coletaForm">
+      <div class="form-group">
+        <label for="nome">Nome do Paciente</label>
+        <input type="text" id="nome" name="nome" required autocomplete="off" placeholder="Ex: João da Silva">
+      </div>
+
+      <div class="form-group">
+        <label for="prontuario">Prontuário</label>
+        <input type="text" id="prontuario" name="prontuario" required autocomplete="off" inputmode="numeric" placeholder="Ex: 123456">
+      </div>
+
+      <div class="form-group">
+        <label for="conselho">Número do Conselho Profissional</label>
+        <input type="text" id="conselho" name="conselho" required autocomplete="off" placeholder="Ex: CRM 12345 / Coren...">
+      </div>
+
+      <div class="form-group">
+        <label for="justificativa">Justificativa do Procedimento</label>
+        <textarea id="justificativa" name="justificativa" required placeholder="Descreva brevemente a justificativa..."></textarea>
+      </div>
+
+      <button type="submit" id="submitBtn">
+        <span id="btnText">Registrar Coleta</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast">Sucesso!</div>
+
+  <script>
+    // Audio Context Setup for Psychology/UX Feedback
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if(audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Generate subtle synths to avoid heavy base64 assets
+    function playTone(freq, type, duration, vol) {
+      if(!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    const soundEffects = {
+      focus: () => playTone(800, 'sine', 0.1, 0.05), // Subtle "pop" for inputs
+      submit: () => {
+        playTone(440, 'triangle', 0.1, 0.1);
+        setTimeout(() => playTone(554, 'triangle', 0.2, 0.1), 100);
+      },
+      success: () => {
+        playTone(523.25, 'sine', 0.1, 0.1); // C5
+        setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 150); // E5
+        setTimeout(() => playTone(783.99, 'sine', 0.3, 0.1), 300); // G5
+      },
+      error: () => {
+        playTone(300, 'square', 0.2, 0.1);
+        setTimeout(() => playTone(250, 'square', 0.3, 0.1), 200);
+      }
+    };
+
+    // Attach listeners for UX
+    document.addEventListener('click', initAudio, { once: true });
+    document.addEventListener('touchstart', initAudio, { once: true });
+
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        initAudio();
+        soundEffects.focus();
+        // Visual psychology: highlight active label
+        input.previousElementSibling.style.color = 'var(--primary)';
+      });
+      input.addEventListener('blur', () => {
+        input.previousElementSibling.style.color = 'var(--text-main)';
+      });
+    });
+
+    const form = document.getElementById('coletaForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('spinner');
+    const toast = document.getElementById('toast');
+    const container = document.getElementById('app-container');
+
+    function showToast(message, isError = false) {
+      toast.textContent = message;
+      toast.className = isError ? 'toast error show' : 'toast show';
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      initAudio();
+      soundEffects.submit();
+
+      // UI Loading State
+      submitBtn.disabled = true;
+      btnText.textContent = "Enviando...";
+      spinner.style.display = "block";
+      container.style.transform = "scale(0.98)";
+
+      // Collect data
+      const formData = {
+        nome: document.getElementById('nome').value,
+        prontuario: document.getElementById('prontuario').value,
+        conselho: document.getElementById('conselho').value,
+        justificativa: document.getElementById('justificativa').value
+      };
+
+      // Call Google Apps Script Backend
+      google.script.run
+        .withSuccessHandler((response) => {
+          submitBtn.disabled = false;
+          btnText.textContent = "Registrar Coleta";
+          spinner.style.display = "none";
+          container.style.transform = "scale(1)";
+          
+          if(response.success) {
+            soundEffects.success();
+            showToast(response.message);
+            form.reset();
+          } else {
+            soundEffects.error();
+            showToast("Erro: " + response.message, true);
+          }
+        })
+        .withFailureHandler((error) => {
+          submitBtn.disabled = false;
+          btnText.textContent = "Registrar Coleta";
+          spinner.style.display = "none";
+          container.style.transform = "scale(1)";
+          soundEffects.error();
+          showToast("Falha na conexão.", true);
+        })
+        .processForm(formData);
+    });
+  </script>
+</body>
+</html>
