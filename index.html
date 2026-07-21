@@ -1,627 +1,390 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Clinify</title>
-  
-  <style>
-    /* Reset & Typography */
-    :root {
-      --bg-color: #f0f4f8;
-      --card-bg: rgba(255, 255, 255, 0.7);
-      --card-border: rgba(255, 255, 255, 0.5);
-      --text-main: #2d3748;
-      --text-muted: #718096;
-      --primary: #3182ce;
-      --primary-hover: #2b6cb0;
-      --success: #38a169;
-      --error: #e53e3e;
-      --focus-ring: rgba(49, 130, 206, 0.4);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f4f6f3">
+<title>Clinify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1d2a24; 
+  --paper: #f4f6f3; 
+  --card: #ffffff; 
+  --line: #e0e6e0; 
+  --mut: #68766e;
+  --pri: #2b6cb0; 
+  --pri-d: #1a4971; 
+  --pri-s: #e6eef7;
+  --red: #e53e3e; 
+  --red-s: #fce8e8;
+  --green: #38a169;
+  --green-s: #e6f6ec;
+  --r: 16px; 
+  --sh: 0 1px 2px rgba(29,42,36,.06), 0 4px 14px rgba(29,42,36,.05);
+  --sh-lift: 0 6px 16px rgba(29,42,36,.10), 0 2px 5px rgba(29,42,36,.06);
+  --disp: 'Inter', system-ui, sans-serif; 
+  --body: 'Inter', system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --tap: 48px;
+  --sa-t: env(safe-area-inset-top, 0px);
+  --sa-r: env(safe-area-inset-right, 0px);
+  --sa-b: env(safe-area-inset-bottom, 0px);
+  --sa-l: env(safe-area-inset-left, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: var(--body); background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.55; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
+input, select, textarea { font-family: inherit; font-size: 16px; color: var(--ink); max-width: 100%; }
+h1, h2, h3 { font-family: var(--disp); line-height: 1.2; letter-spacing: -.01em; }
+:focus-visible { outline: 2px solid var(--pri); outline-offset: 2px; border-radius: 4px; }
+.hide { display: none !important; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+/* ---------- topbar ---------- */
+.topbar { position: sticky; top: 0; z-index: 40; background: rgba(244,246,243,.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding-top: var(--sa-t); }
+.topbar .in { max-width: 800px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 12px max(18px, var(--sa-r)) 12px max(18px, var(--sa-l)); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+.brand .dot { width: 34px; height: 34px; color: var(--pri); display: grid; place-items: center; background: var(--pri-s); border-radius: 8px; }
+.brand .dot svg { width: 20px; height: 20px; stroke-width: 2.2; }
+.brand b { font-family: var(--disp); font-weight: 700; font-size: 18px; }
+.brand small { display: block; color: var(--mut); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; margin-top: -2px; }
+.top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.iconbtn { background: none; border: 0; padding: 8px; border-radius: 10px; color: var(--mut); display: grid; place-items: center; transition: .15s; min-width: var(--tap); min-height: var(--tap); }
+.iconbtn:hover { background: var(--card); color: var(--ink); box-shadow: var(--sh); }
+.iconbtn svg { width: 20px; height: 20px; stroke-width: 2; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
-      overflow-x: hidden;
-    }
+/* ---------- layout ---------- */
+main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) calc(90px + var(--sa-b)) max(18px, var(--sa-l)); }
+.narrow { max-width: 500px; margin: 0 auto; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--sh); padding: 24px; }
+.header-txt { text-align: center; margin-bottom: 24px; }
+.header-txt h2 { font-size: 1.4rem; color: var(--pri); margin-bottom: 4px; }
+.header-txt p { color: var(--mut); font-size: 0.95rem; }
 
-    /* Admin Padlock */
-    #admin-padlock {
-      position: absolute;
-      top: env(safe-area-inset-top, 20px);
-      right: 20px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      opacity: 0.5;
-      transition: opacity 0.3s ease, transform 0.2s ease;
-      z-index: 100;
-    }
-    #admin-padlock:hover {
-      opacity: 1;
-      transform: scale(1.1);
-    }
+/* ---------- forms ---------- */
+.field { margin-bottom: 18px; }
+.field > label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+.field input, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-height: 48px; background: #fff; transition: border-color .15s, box-shadow .15s; -webkit-appearance: none; }
+.field textarea { min-height: 100px; resize: vertical; }
+.field input:focus, .field textarea:focus { border-color: var(--pri); outline: none; box-shadow: 0 0 0 3px rgba(43, 108, 176, .15); }
 
-    /* Glassmorphism Container */
-    .container {
-      width: 100%;
-      max-width: 400px;
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 32px 24px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-      transform: translateY(0);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--pri); color: #fff; border: 1px solid var(--pri); border-radius: 12px; padding: 14px 20px; min-height: 52px; font-weight: 600; font-size: 15px; transition: .15s; width: 100%; }
+.btn:hover { background: var(--pri-d); transform: translateY(-1px); box-shadow: var(--sh); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.btn.ghost { background: var(--paper); color: var(--ink); border-color: var(--line); margin-top: 10px; }
+.btn.ghost:hover { border-color: var(--mut); background: var(--card); }
 
-    /* Dashboard Container (wider) */
-    .dashboard-container {
-      max-width: 800px;
-      display: none;
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    
-    .dashboard-container.visible {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
+.spin { width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: sp .7s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
 
-    #app-container {
-      display: block;
-    }
+/* ---------- success ---------- */
+.done { text-align: center; padding: 38px 22px; }
+.done .ok { width: 68px; height: 68px; border-radius: 50%; background: var(--green-s); color: var(--green); display: grid; place-items: center; margin: 0 auto 16px; }
+.done .ok svg { width: 34px; height: 34px; stroke-width: 2.5; }
+.done .proto { font-family: var(--mono); font-size: clamp(24px, 7vw, 30px); font-weight: 700; letter-spacing: .04em; color: var(--pri-d); margin: 8px 0 16px; overflow-wrap: anywhere; }
 
-    .header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
+/* ---------- admin dashboard ---------- */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--sh); }
+.stat .v { font-family: var(--disp); font-weight: 700; font-size: clamp(24px, 6vw, 32px); line-height: 1.1; color: var(--pri); }
+.stat .l { color: var(--mut); font-size: 12.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; margin-top: 4px; }
 
-    .header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
+.appbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.appbar h2 { font-size: clamp(19px, 5vw, 22px); }
+.appbar button { font-size: 13.5px; padding: 6px 12px; min-height: 36px; border-radius: 8px; }
 
-    .header p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
+/* pgrid (mobile friendly table) */
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.pcard { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); }
+.pcard:hover { border-color: var(--mut); transform: translateY(-2px); }
+.pcard .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.pcard .id { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--pri-d); }
+.pcard .date { font-size: 12px; color: var(--mut); margin-left: auto; }
+.pcard b { font-size: 16px; display: block; margin-bottom: 4px; color: var(--ink); }
+.pcard .info { color: var(--mut); font-size: 13.5px; display: flex; gap: 6px; align-items: center; margin-bottom: 12px; }
+.pcard .info svg { width: 14px; height: 14px; }
+.pcard .desc { font-size: 14px; background: var(--paper); padding: 10px; border-radius: 8px; color: var(--ink); border: 1px solid var(--line); }
 
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 8px;
-      transition: color 0.3s ease;
-    }
-
-    input, textarea {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.9);
-      border: 2px solid transparent;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 1rem;
-      color: var(--text-main);
-      transition: all 0.3s ease;
-      -webkit-appearance: none;
-      touch-action: manipulation;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px var(--focus-ring);
-      background: #ffffff;
-    }
-
-    /* Button */
-    button {
-      width: 100%;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      -webkit-appearance: none;
-      touch-action: manipulation;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
-    }
-
-    button.btn-secondary {
-      background: transparent;
-      color: var(--primary);
-      box-shadow: inset 0 0 0 2px var(--primary);
-      margin-top: 10px;
-    }
-
-    button:active {
-      transform: scale(0.97);
-    }
-
-    button:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 6px 8px rgba(49, 130, 206, 0.3);
-    }
-    
-    button.btn-secondary:hover {
-      background: rgba(49, 130, 206, 0.1);
-    }
-
-    button:disabled {
-      background: var(--text-muted);
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    /* Loading Spinner */
-    .spinner {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
-      margin-left: 10px;
-    }
-
-    .spinner.dark {
-      border: 3px solid rgba(49, 130, 206, 0.2);
-      border-top-color: var(--primary);
-      margin: 20px auto;
-      display: block;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: env(safe-area-inset-bottom, 20px);
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--success);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      opacity: 0;
-      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      z-index: 1000;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(-20px);
-      opacity: 1;
-    }
-    
-    .toast.error {
-      background: var(--error);
-    }
-
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 999;
-    }
-    
-    .modal-overlay.show {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 24px;
-      width: 90%;
-      max-width: 320px;
-      transform: scale(0.9);
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .modal-overlay.show .modal-content {
-      transform: scale(1);
-    }
-
-    /* Table styles */
-    .table-responsive {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin-top: 20px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.8);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
-
-    th, td {
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-
-    th {
-      background: rgba(49, 130, 206, 0.1);
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-  </style>
+/* ---------- toast ---------- */
+#toast { position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 100px); background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px; opacity: 0; transition: .4s cubic-bezier(.4,0,.2,1); z-index: 1000; box-shadow: var(--sh-lift); pointer-events: none; }
+#toast.show { transform: translate(-50%, 0); opacity: 1; }
+#toast.err { background: var(--red); }
+</style>
 </head>
 <body>
 
-  <div id="admin-padlock" title="Acesso Administrativo">🔒</div>
-
-  <!-- Main App View -->
-  <div class="container" id="app-container">
-    <div class="header">
-      <h1>Clinify</h1>
-      <p>Preencha os dados do procedimento</p>
-    </div>
-
-    <form id="coletaForm">
-      <div class="form-group">
-        <label for="nome">Nome do Paciente</label>
-        <input type="text" id="nome" name="nome" required autocomplete="off" placeholder="Ex: João da Silva">
+<div class="topbar">
+  <div class="in">
+    <a href="#" class="brand" onclick="goHome()">
+      <div class="dot">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       </div>
-
-      <div class="form-group">
-        <label for="prontuario">Prontuário</label>
-        <input type="text" id="prontuario" name="prontuario" required autocomplete="off" inputmode="numeric" placeholder="Ex: 123456">
+      <div>
+        <b>Clinify</b>
+        <small>Coleta de Dados</small>
       </div>
-
-      <div class="form-group">
-        <label for="conselho">Número do Conselho Profissional</label>
-        <input type="text" id="conselho" name="conselho" required autocomplete="off" placeholder="Ex: CRM 12345 / Coren...">
-      </div>
-
-      <div class="form-group">
-        <label for="justificativa">Justificativa do Procedimento</label>
-        <textarea id="justificativa" name="justificativa" required placeholder="Descreva brevemente a justificativa..."></textarea>
-      </div>
-
-      <button type="submit" id="submitBtn">
-        <span id="btnText">Registrar Coleta</span>
-        <div class="spinner" id="spinner"></div>
+    </a>
+    <div class="top-right">
+      <button class="iconbtn" onclick="goLogin()" title="Acesso Administrativo">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
       </button>
-    </form>
-  </div>
-
-  <!-- Dashboard View -->
-  <div class="container dashboard-container" id="dashboard-container">
-    <div class="header">
-      <h1>Dashboard Administrativo</h1>
-      <p>Registros Coletados</p>
     </div>
-    
-    <div id="dashboard-content">
-      <div class="spinner dark" id="dashboard-spinner" style="display: none;"></div>
-      <div class="table-responsive" id="table-wrapper"></div>
-    </div>
-
-    <button type="button" class="btn-secondary" id="logoutBtn" style="margin-top: 20px;">Sair / Voltar</button>
   </div>
+</div>
 
-  <!-- Login Modal -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="modal-content">
-      <div class="header" style="margin-bottom: 16px;">
-        <h2 style="font-size: 1.2rem; color: var(--primary);">Área Restrita</h2>
+<main>
+  <!-- Formulário Público -->
+  <div id="v-pub">
+    <div class="narrow card">
+      <div class="header-txt">
+        <h2>Nova Coleta</h2>
+        <p>Preencha os dados do procedimento</p>
       </div>
-      <form id="loginForm">
-        <div class="form-group">
-          <input type="password" id="adminPassword" placeholder="Senha do Administrador" required>
+      <form id="f-coleta" onsubmit="submitColeta(event)">
+        <div class="field">
+          <label>Nome do Paciente</label>
+          <input type="text" id="i-nome" required autocomplete="off" placeholder="Ex: João da Silva">
         </div>
-        <button type="submit" id="loginSubmitBtn">
-          <span id="loginBtnText">Acessar</span>
-          <div class="spinner" id="loginSpinner"></div>
+        <div class="field">
+          <label>Prontuário</label>
+          <input type="text" id="i-pront" required autocomplete="off" inputmode="numeric" placeholder="Ex: 123456">
+        </div>
+        <div class="field">
+          <label>Conselho Profissional</label>
+          <input type="text" id="i-cons" required autocomplete="off" placeholder="Ex: CRM 12345 / Coren...">
+        </div>
+        <div class="field">
+          <label>Justificativa do Procedimento</label>
+          <textarea id="i-just" required placeholder="Descreva brevemente a justificativa..."></textarea>
+        </div>
+        <button type="submit" id="btn-coleta" class="btn">
+          <span>Registrar Coleta</span>
         </button>
-        <button type="button" class="btn-secondary" id="closeModalBtn">Cancelar</button>
       </form>
     </div>
   </div>
 
-  <div class="toast" id="toast">Sucesso!</div>
+  <!-- Sucesso -->
+  <div id="v-done" class="hide">
+    <div class="narrow card done">
+      <div class="ok">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h2>Registrado com Sucesso!</h2>
+      <p class="muted" style="margin-top:8px">O código interno da sua coleta é:</p>
+      <div class="proto" id="done-id">#0000</div>
+      <button class="btn ghost block" onclick="goHome()">Nova Coleta</button>
+    </div>
+  </div>
 
-  <script>
-    // Audio Context Setup for Psychology/UX Feedback
-    let audioCtx = null;
+  <!-- Login Admin -->
+  <div id="v-login" class="hide">
+    <div class="narrow card" style="max-width:380px">
+      <div class="header-txt">
+        <div class="brand" style="justify-content:center; margin-bottom:16px;">
+          <div class="dot" style="background:var(--red-s); color:var(--red)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>
+        </div>
+        <h2>Área Restrita</h2>
+        <p>Acesso exclusivo para administradores.</p>
+      </div>
+      <form onsubmit="submitLogin(event)">
+        <div class="field">
+          <input type="password" id="i-pass" placeholder="Senha" required>
+        </div>
+        <button type="submit" id="btn-login" class="btn">Acessar Painel</button>
+        <button type="button" class="btn ghost block" onclick="goHome()">Voltar</button>
+      </form>
+    </div>
+  </div>
 
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if(audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+  <!-- Admin Dashboard -->
+  <div id="v-admin" class="hide">
+    <div class="appbar">
+      <h2>Painel Administrativo</h2>
+      <button class="btn ghost sm" onclick="logout()">Encerrar Sessão</button>
+    </div>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="v" id="st-total">-</div>
+        <div class="l">Total de Registros</div>
+      </div>
+      <div class="stat">
+        <div class="v" id="st-hoje">-</div>
+        <div class="l">Coletas Hoje</div>
+      </div>
+    </div>
+
+    <div id="admin-content"></div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+const $ = q => document.querySelector(q);
+const views = ['v-pub', 'v-done', 'v-login', 'v-admin'];
+
+// --- UI Navigation ---
+function showView(vid) {
+  views.forEach(v => $('#'+v).classList.add('hide'));
+  $('#'+vid).classList.remove('hide');
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  $('#f-coleta').reset();
+  showView('v-pub');
+}
+
+function goLogin() {
+  $('#i-pass').value = '';
+  showView('v-login');
+  setTimeout(() => $('#i-pass').focus(), 100);
+}
+
+function logout() {
+  S.adminPass = null;
+  goHome();
+}
+
+function toast(msg, err) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = err ? 'err show' : 'show';
+  setTimeout(() => t.className = '', 3000);
+}
+
+// --- RPC Wrapper (Diet-Request Pattern) ---
+function rpc(func, ...args) {
+  return new Promise((resolve, reject) => {
+    google.script.run
+      .withSuccessHandler(res => resolve(res))
+      .withFailureHandler(err => reject(err))
+      [func](...args);
+  });
+}
+
+// --- State ---
+const S = { adminPass: null };
+
+// --- Logic ---
+async function submitColeta(e) {
+  e.preventDefault();
+  const btn = $('#btn-coleta');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div>';
+
+  const data = {
+    nome: $('#i-nome').value,
+    prontuario: $('#i-pront').value,
+    conselho: $('#i-cons').value,
+    justificativa: $('#i-just').value
+  };
+
+  try {
+    const res = await rpc('processForm', data);
+    if(res.ok) {
+      $('#done-id').textContent = res.id;
+      showView('v-done');
+    } else {
+      toast(res.erro || 'Erro ao registrar', true);
     }
+  } catch(err) {
+    toast('Falha na comunicação', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>Registrar Coleta</span>';
+  }
+}
 
-    function playTone(freq, type, duration, vol) {
-      if(!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
+async function submitLogin(e) {
+  e.preventDefault();
+  const btn = $('#btn-login');
+  const pass = $('#i-pass').value;
+  
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div>';
+
+  try {
+    const res = await rpc('getRegistros', pass);
+    if(res.ok) {
+      S.adminPass = pass;
+      renderAdmin(res.data);
+      showView('v-admin');
+    } else {
+      toast(res.erro || 'Senha incorreta', true);
+      $('#i-pass').value = '';
+      $('#i-pass').focus();
     }
+  } catch(err) {
+    toast('Falha na comunicação', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Acessar Painel';
+  }
+}
 
-    const soundEffects = {
-      focus: () => playTone(800, 'sine', 0.1, 0.05),
-      submit: () => {
-        playTone(440, 'triangle', 0.1, 0.1);
-        setTimeout(() => playTone(554, 'triangle', 0.2, 0.1), 100);
-      },
-      success: () => {
-        playTone(523.25, 'sine', 0.1, 0.1); 
-        setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 150); 
-        setTimeout(() => playTone(783.99, 'sine', 0.3, 0.1), 300); 
-      },
-      error: () => {
-        playTone(300, 'square', 0.2, 0.1);
-        setTimeout(() => playTone(250, 'square', 0.3, 0.1), 200);
-      }
-    };
-
-    document.addEventListener('click', initAudio, { once: true });
-    document.addEventListener('touchstart', initAudio, { once: true });
-
-    const inputs = document.querySelectorAll('input, textarea');
-    inputs.forEach(input => {
-      input.addEventListener('focus', () => {
-        initAudio();
-        soundEffects.focus();
-        if(input.previousElementSibling) {
-          input.previousElementSibling.style.color = 'var(--primary)';
-        }
-      });
-      input.addEventListener('blur', () => {
-        if(input.previousElementSibling) {
-          input.previousElementSibling.style.color = 'var(--text-main)';
-        }
-      });
-    });
-
-    const form = document.getElementById('coletaForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const btnText = document.getElementById('btnText');
-    const spinner = document.getElementById('spinner');
-    const toast = document.getElementById('toast');
-    const container = document.getElementById('app-container');
-
-    const adminPadlock = document.getElementById('admin-padlock');
-    const loginModal = document.getElementById('loginModal');
-    const loginForm = document.getElementById('loginForm');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const dashboardContainer = document.getElementById('dashboard-container');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const tableWrapper = document.getElementById('table-wrapper');
-    const dashboardSpinner = document.getElementById('dashboard-spinner');
-
-    function showToast(message, isError = false) {
-      toast.textContent = message;
-      toast.className = isError ? 'toast error show' : 'toast show';
-      setTimeout(() => {
-        toast.className = 'toast';
-      }, 3000);
+function renderAdmin(rows) {
+  if(!rows || rows.length <= 1) {
+    $('#st-total').textContent = '0';
+    $('#st-hoje').textContent = '0';
+    $('#admin-content').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhuma coleta registrada ainda.</div>';
+    return;
+  }
+  
+  const total = rows.length - 1; // remove cabecalho
+  let hoje = 0;
+  const todayStr = new Date().toLocaleDateString('pt-BR');
+  
+  let html = '<div class="pgrid">';
+  
+  // iterar de trás pra frente (mais recentes primeiro)
+  for(let i = rows.length - 1; i > 0; i--) {
+    const r = rows[i];
+    // r[0]: ID, r[1]: Data, r[2]: Nome, r[3]: Prontuario, r[4]: Conselho, r[5]: Justificativa
+    
+    let dateStr = r[1];
+    if(typeof dateStr.toLocaleDateString === 'function') {
+      dateStr = dateStr.toLocaleDateString('pt-BR');
+    } else {
+      // Se vier string do backend, tenta extrair só a data local
+      dateStr = new Date(r[1]).toLocaleDateString('pt-BR');
     }
+    
+    if(dateStr === todayStr) hoje++;
+    
+    const timeStr = new Date(r[1]).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
 
-    // --- Formulário Principal ---
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      initAudio();
-      soundEffects.submit();
+    html += `
+      <div class="pcard">
+        <div class="top">
+          <span class="id">${r[0]}</span>
+          <span class="date">${dateStr} às ${timeStr}</span>
+        </div>
+        <b>${r[2]}</b>
+        <div class="info">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
+          Prontuário: ${r[3]}
+        </div>
+        <div class="desc">${r[5]}</div>
+        <div style="margin-top:10px; font-size:11px; color:var(--mut); text-transform:uppercase; font-weight:600; letter-spacing:0.04em">Conselho: ${r[4]}</div>
+      </div>
+    `;
+  }
+  html += '</div>';
 
-      submitBtn.disabled = true;
-      btnText.textContent = "Enviando...";
-      spinner.style.display = "block";
-      container.style.transform = "scale(0.98)";
-
-      const formData = {
-        nome: document.getElementById('nome').value,
-        prontuario: document.getElementById('prontuario').value,
-        conselho: document.getElementById('conselho').value,
-        justificativa: document.getElementById('justificativa').value
-      };
-
-      google.script.run
-        .withSuccessHandler((response) => {
-          submitBtn.disabled = false;
-          btnText.textContent = "Registrar Coleta";
-          spinner.style.display = "none";
-          container.style.transform = "scale(1)";
-          
-          if(response.success) {
-            soundEffects.success();
-            showToast(response.message);
-            form.reset();
-          } else {
-            soundEffects.error();
-            showToast("Erro: " + response.message, true);
-          }
-        })
-        .withFailureHandler((error) => {
-          submitBtn.disabled = false;
-          btnText.textContent = "Registrar Coleta";
-          spinner.style.display = "none";
-          container.style.transform = "scale(1)";
-          soundEffects.error();
-          showToast("Falha na conexão.", true);
-        })
-        .processForm(formData);
-    });
-
-    // --- Lógica Administrativa ---
-    adminPadlock.addEventListener('click', () => {
-      initAudio();
-      soundEffects.focus();
-      loginModal.classList.add('show');
-      document.getElementById('adminPassword').focus();
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-      loginModal.classList.remove('show');
-      loginForm.reset();
-    });
-
-    logoutBtn.addEventListener('click', () => {
-      dashboardContainer.classList.remove('visible');
-      setTimeout(() => {
-        container.style.display = 'block';
-        adminPadlock.style.display = 'block';
-        // force reflow
-        void container.offsetWidth;
-        container.style.opacity = '1';
-        container.style.transform = 'translateY(0)';
-      }, 300);
-    });
-
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      initAudio();
-      soundEffects.submit();
-
-      const pass = document.getElementById('adminPassword').value;
-      const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-      const loginBtnText = document.getElementById('loginBtnText');
-      const loginSpinner = document.getElementById('loginSpinner');
-
-      loginSubmitBtn.disabled = true;
-      loginBtnText.textContent = "Verificando...";
-      loginSpinner.style.display = "block";
-
-      google.script.run
-        .withSuccessHandler((response) => {
-          loginSubmitBtn.disabled = false;
-          loginBtnText.textContent = "Acessar";
-          loginSpinner.style.display = "none";
-
-          if(response.success) {
-            soundEffects.success();
-            loginModal.classList.remove('show');
-            loginForm.reset();
-            
-            // Transição para Dashboard
-            container.style.display = 'none';
-            adminPadlock.style.display = 'none';
-            dashboardContainer.classList.add('visible');
-            
-            renderTable(response.data);
-          } else {
-            soundEffects.error();
-            showToast(response.message, true);
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminPassword').focus();
-          }
-        })
-        .withFailureHandler((error) => {
-          loginSubmitBtn.disabled = false;
-          loginBtnText.textContent = "Acessar";
-          loginSpinner.style.display = "none";
-          soundEffects.error();
-          showToast("Erro ao conectar.", true);
-        })
-        .getRegistros(pass);
-    });
-
-    function renderTable(data) {
-      if(!data || data.length === 0) {
-        tableWrapper.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--text-muted);'>Nenhum registro encontrado.</p>";
-        return;
-      }
-
-      let html = "<table>";
-      // Headers
-      html += "<thead><tr>";
-      data[0].forEach(header => {
-        html += `<th>${header}</th>`;
-      });
-      html += "</tr></thead><tbody>";
-
-      // Rows
-      for(let i = 1; i < data.length; i++) {
-        html += "<tr>";
-        data[i].forEach(cell => {
-          html += `<td>${cell}</td>`;
-        });
-        html += "</tr>";
-      }
-
-      html += "</tbody></table>";
-      tableWrapper.innerHTML = html;
-    }
-  </script>
+  $('#st-total').textContent = total;
+  $('#st-hoje').textContent = hoje;
+  $('#admin-content').innerHTML = html;
+}
+</script>
 </body>
 </html>
