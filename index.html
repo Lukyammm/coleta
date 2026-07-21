@@ -168,7 +168,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 
 /* pgrid (Procedimentos) */
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
-.pcard { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); display: flex; flex-direction: column; }
+.pcard { background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); display: flex; flex-direction: column; }
 .pcard:hover { border-color: var(--mut); transform: translateY(-2px); }
 .pcard .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .pcard .id { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--pri-d); }
@@ -180,12 +180,12 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .pcard-actions { margin-top: auto; display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--line); padding-top: 12px; }
 
 /* Table (Logs e Setores) */
-.tbl-wrap { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; box-shadow: var(--sh); }
+.tbl-wrap { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; box-shadow: var(--sh); }
 .tbl { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-.tbl th { background: #fafafa; padding: 14px 16px; font-size: 12px; font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line); }
+.tbl th { background: var(--paper); padding: 14px 16px; font-size: 12px; font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line); }
 .tbl td { padding: 14px 16px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: middle; }
 .tbl tr:last-child td { border-bottom: 0; }
-.tbl tr:hover td { background: #fafafa; }
+.tbl tr:hover td { background: var(--paper); }
 
 /* ---------- toast & modal ---------- */
 #toast { position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 100px); background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px; opacity: 0; transition: .4s cubic-bezier(.4,0,.2,1); z-index: 1000; box-shadow: var(--sh-lift); pointer-events: none; }
