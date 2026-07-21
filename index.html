@@ -315,7 +315,9 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
       <button class="active" onclick="switchAdminView('procedimentos')">Procedimentos</button>
       <button onclick="switchAdminView('setores')">Setores (Config)</button>
       <button onclick="switchAdminView('logs')">Auditoria (Logs)</button>
-      <button onclick="toggleTheme()" id="btn-theme" style="margin-left:auto; background:transparent; padding:0 8px; font-size:18px;" title="Alternar Tema">🌙</button>
+      <button onclick="toggleTheme()" id="btn-theme" style="margin-left:auto; background:transparent; padding:0 8px; width:40px; height:40px; color:var(--mut);" title="Alternar Tema">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
       <button onclick="logout()" style="color:var(--red)">Sair</button>
     </div>
     
@@ -761,7 +763,10 @@ function renderAdminCards(rows) {
           Pront: ${obj.pront} • Setor: ${obj.setor}
         </div>
         <div class="desc">${obj.just}</div>
-        <div style="font-size:11px; color:var(--mut); font-weight:600; text-transform:uppercase;">📝 Conselho: ${obj.cons}</div>
+        <div style="font-size:11px; color:var(--mut); font-weight:600; text-transform:uppercase; display:flex; align-items:center;">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px; margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Conselho: ${obj.cons}
+        </div>
         ${status === 'Pendente' ? `
           <div class="pcard-actions">
             <button class="btn ghost btn-sm" style="color:var(--red)" onclick="changeStatus('${r[0]}', 'Cancelado', this)">Cancelar</button>
@@ -1000,13 +1005,17 @@ function toggleTheme() {
   const root = document.documentElement;
   const isDark = root.getAttribute('data-theme') === 'dark';
   root.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('btn-theme').innerText = isDark ? '🌙' : '☀️';
+  const svgMoon = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>';
+  const svgSun = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>';
+  document.getElementById('btn-theme').innerHTML = isDark ? svgMoon : svgSun;
   localStorage.setItem('clinify-theme', isDark ? 'light' : 'dark');
 }
 document.addEventListener('DOMContentLoaded', () => {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const btn = document.getElementById('btn-theme');
-  if(btn) btn.innerText = isDark ? '☀️' : '🌙';
+  const svgMoon = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>';
+  const svgSun = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>';
+  if(btn) btn.innerHTML = isDark ? svgSun : svgMoon;
 });
 
 function togglePass() {
