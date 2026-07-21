@@ -205,7 +205,10 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         <small>Gestão de Procedimentos</small>
       </div>
     </a>
-    <div class="top-right">
+    <div class="top-right" style="display:flex; align-items:center; gap:8px;">
+      <button onclick="toggleTheme()" id="btn-theme" class="iconbtn" title="Alternar Tema">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
       <div id="ui-user" class="hide chip">
         <div class="av">A</div>
         Admin
@@ -316,10 +319,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
       <button class="active" onclick="switchAdminView('procedimentos')">Procedimentos</button>
       <button onclick="switchAdminView('setores')">Setores (Config)</button>
       <button onclick="switchAdminView('logs')">Auditoria (Logs)</button>
-      <button onclick="toggleTheme()" id="btn-theme" style="margin-left:auto; background:transparent; padding:0 8px; width:40px; height:40px; color:var(--mut);" title="Alternar Tema">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-      </button>
-      <button onclick="logout()" style="color:var(--red)">Sair</button>
+      <button onclick="logout()" style="margin-left:auto; color:var(--red)">Sair</button>
     </div>
     
     <!-- Sub-view: Procedimentos -->
