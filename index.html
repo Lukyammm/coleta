@@ -553,6 +553,24 @@ function filterAdminColetas() {
     return;
   }
   
+  const headers = S.coletas[0].map(h => h.toString().toLowerCase());
+  const hIdx = (name, alt) => {
+    let i = headers.indexOf(name.toLowerCase());
+    if (i === -1 && alt) i = headers.indexOf(alt.toLowerCase());
+    return i;
+  };
+  
+  const col = {
+    id: hIdx('ID'),
+    date: hIdx('Data e Hora', 'Data'),
+    nome: hIdx('Paciente', 'Nome'),
+    pront: hIdx('Prontuário'),
+    setor: hIdx('Setor'),
+    cons: hIdx('Conselho Profissional', 'Conselho'),
+    just: hIdx('Justificativa'),
+    status: hIdx('Status')
+  };
+
   let filtered = [];
   let statTotal = 0;
   let statPend = 0;
@@ -560,25 +578,36 @@ function filterAdminColetas() {
   const todayStr = new Date().toLocaleDateString('pt-BR');
 
   for(let i = 1; i < S.coletas.length; i++) {
-    const r = S.coletas[i]; // [ID, Data, Paciente, Pront, Setor, Cons, Just, Status]
+    const r = S.coletas[i];
     statTotal++;
     
-    let status = r[7] || 'Pendente';
+    let status = (col.status >= 0 && r[col.status]) ? r[col.status] : 'Pendente';
     if(status === 'Pendente') statPend++;
     
-    let dateStr = r[1];
+    let dateStr = (col.date >= 0 && r[col.date]) ? r[col.date] : '';
     if(typeof dateStr.toLocaleDateString === 'function') dateStr = dateStr.toLocaleDateString('pt-BR');
-    else dateStr = new Date(r[1]).toLocaleDateString('pt-BR');
+    else if (dateStr) dateStr = new Date(dateStr).toLocaleDateString('pt-BR');
     
     if(status === 'Concluído' && dateStr === todayStr) statConcHoje++;
     
     if(S.tab !== 'Todas' && status !== S.tab) continue;
     
+    const obj = {
+      id: col.id >= 0 ? r[col.id] : '---',
+      dateObj: col.date >= 0 ? r[col.date] : null,
+      nome: col.nome >= 0 ? r[col.nome] : '---',
+      pront: col.pront >= 0 ? r[col.pront] : '---',
+      setor: col.setor >= 0 ? r[col.setor] : 'Geral',
+      cons: col.cons >= 0 ? r[col.cons] : '---',
+      just: col.just >= 0 ? r[col.just] : '---',
+      status: status
+    };
+    
     if(S.search) {
-      const txt = (r[2]+' '+r[0]+' '+r[4]).toLowerCase();
+      const txt = (obj.nome+' '+obj.id+' '+obj.setor).toLowerCase();
       if(!txt.includes(S.search)) continue;
     }
-    filtered.push(r);
+    filtered.push(obj);
   }
   
   $('#st-total').textContent = statTotal;
@@ -595,32 +624,37 @@ function renderAdminCards(rows) {
   }
   let html = '<div class="pgrid">';
   for(let i = rows.length - 1; i >= 0; i--) {
-    const r = rows[i];
-    const status = r[7] || 'Pendente';
+    const obj = rows[i];
+    const status = obj.status;
     let badgeClass = status === 'Pendente' ? 'b-warn' : (status === 'Concluído' ? 'b-ok' : 'b-neutral');
     
-    let d = new Date(r[1]);
-    let dateStr = d.toLocaleDateString('pt-BR');
-    let timeStr = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    let dateStr = '---', timeStr = '---';
+    if (obj.dateObj) {
+      let d = new Date(obj.dateObj);
+      if (!isNaN(d.getTime())) {
+        dateStr = d.toLocaleDateString('pt-BR');
+        timeStr = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      }
+    }
 
     html += `
       <div class="pcard">
         <div class="top">
-          <span class="id">${r[0]}</span>
+          <span class="id">${obj.id}</span>
           <span class="badge ${badgeClass}">${status}</span>
           <span class="date">${dateStr} às ${timeStr}</span>
         </div>
-        <b>${r[2]}</b>
+        <b>${obj.nome}</b>
         <div class="info">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
-          ${r[3]} • ${r[4]}
+          Pront: ${obj.pront} • Setor: ${obj.setor}
         </div>
-        <div class="desc">${r[6]}</div>
-        <div style="font-size:11px; color:var(--mut); font-weight:600; text-transform:uppercase;">📝 Conselho: ${r[5]}</div>
+        <div class="desc">${obj.just}</div>
+        <div style="font-size:11px; color:var(--mut); font-weight:600; text-transform:uppercase;">📝 Conselho: ${obj.cons}</div>
         ${status === 'Pendente' ? `
           <div class="pcard-actions">
-            <button class="btn sm success" onclick="changeStatus('${r[0]}', 'Concluído', this)">✔ Concluir</button>
-            <button class="btn sm ghost" onclick="changeStatus('${r[0]}', 'Cancelado', this)">Cancelar</button>
+            <button class="btn sm success" onclick="changeStatus('${obj.id}', 'Concluído', this)">✔ Concluir</button>
+            <button class="btn sm ghost" onclick="changeStatus('${obj.id}', 'Cancelado', this)">Cancelar</button>
           </div>
         ` : ''}
       </div>
