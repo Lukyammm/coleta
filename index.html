@@ -3,12 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f4f6f3">
 <title>Clinify</title>
+<script>
+  if (localStorage.getItem('clinify-theme') === 'dark' || (!localStorage.getItem('clinify-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
   --ink: #1d2a24; 
@@ -37,6 +43,19 @@
   --sa-b: env(safe-area-inset-bottom, 0px);
   --sa-l: env(safe-area-inset-left, 0px);
 }
+.skeleton { background: linear-gradient(90deg, var(--line) 25%, var(--card) 50%, var(--line) 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 4px; }
+@keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+[data-theme="dark"] {
+  --ink: #f3f4f6; --paper: #111827; --card: #1f2937; --line: #374151; --mut: #9ca3af;
+  --pri: #60a5fa; --pri-d: #3b82f6; --pri-s: #1e3a8a;
+  --red: #f87171; --red-s: #7f1d1d;
+  --green: #4ade80; --green-s: #14532d;
+  --amber: #fbbf24; --amber-s: #78350f;
+  --sh: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.4);
+  --sh-lift: 0 6px 16px rgba(0,0,0,.5), 0 2px 5px rgba(0,0,0,.3);
+}
+[data-theme="dark"] .field input, [data-theme="dark"] .field select, [data-theme="dark"] .field textarea, [data-theme="dark"] .search-bar input { background: #374151; color: #f3f4f6; border-color: #4b5563; }
+[data-theme="dark"] .admin-nav { background: rgba(31, 41, 55, 0.95); border-bottom-color: #374151; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; }
 body { font-family: var(--body); background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.55; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
@@ -73,6 +92,8 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .field { margin-bottom: 20px; position: relative; }
 .field > label { position: absolute; left: 44px; top: 16px; font-size: 15px; color: var(--mut); pointer-events: none; transition: .2s ease; transform-origin: left top; }
 .field-icon { position: absolute; left: 14px; top: 16px; width: 22px; height: 22px; color: #94a3b8; transition: .2s; }
+.btn-eye { position: absolute; right: 14px; top: 16px; width: 22px; height: 22px; color: #94a3b8; background: transparent; border: none; cursor: pointer; padding: 0; transition: .2s; }
+.btn-eye:hover { color: var(--pri); }
 .field input, .field select, .field textarea, .search-bar input { width: 100%; border: 1.5px solid transparent; border-radius: 14px; padding: 24px 16px 8px 44px; min-height: 56px; background: #f1f5f9; transition: .25s; font-size: 15px; font-weight: 600; color: var(--ink); -webkit-appearance: none; box-shadow: inset 0 2px 4px rgba(0,0,0,.02); }
 .field select { padding-top: 14px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2368766e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
 .field textarea { padding-top: 26px; min-height: 110px; resize: vertical; }
@@ -217,7 +238,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         </div>
         <div class="field">
           <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
-          <input type="text" id="i-pront" required autocomplete="off" inputmode="numeric" placeholder=" ">
+          <input type="text" id="i-pront" required autocomplete="off" inputmode="numeric" placeholder=" " oninput="this.value = this.value.replace(/\D/g, '')">
           <label>Prontuário</label>
         </div>
         <div class="field">
@@ -278,6 +299,9 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
           <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           <input type="password" id="i-pass" required placeholder=" ">
           <label>Senha</label>
+          <button type="button" class="btn-eye" onclick="togglePass()" aria-label="Mostrar Senha" title="Mostrar Senha">
+            <svg id="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
         </div>
         <button type="submit" id="btn-login" class="btn">Acessar Painel</button>
         <button type="button" class="btn ghost block" onclick="goHome()">Voltar</button>
@@ -291,7 +315,8 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
       <button class="active" onclick="switchAdminView('procedimentos')">Procedimentos</button>
       <button onclick="switchAdminView('setores')">Setores (Config)</button>
       <button onclick="switchAdminView('logs')">Auditoria (Logs)</button>
-      <button onclick="logout()" style="margin-left:auto; color:var(--red)">Sair</button>
+      <button onclick="toggleTheme()" id="btn-theme" style="margin-left:auto; background:transparent; padding:0 8px; font-size:18px;" title="Alternar Tema">🌙</button>
+      <button onclick="logout()" style="color:var(--red)">Sair</button>
     </div>
     
     <!-- Sub-view: Procedimentos -->
@@ -311,10 +336,19 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         </div>
       </div>
 
+      <div id="chart-container" style="display:none; background:var(--card); padding:16px; border-radius:var(--r); border:1px solid var(--line); margin-bottom:24px;">
+        <canvas id="sectorChart" style="max-height: 250px;"></canvas>
+      </div>
+
       <div class="controls">
-        <div class="search-bar">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <input type="text" id="i-search" class="field input" placeholder="Buscar paciente, setor ou ID..." oninput="filterAdminProcedimentos()">
+        <div style="display:flex; gap:12px;">
+          <div class="search-bar" style="flex:1;">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="i-search" class="field input" placeholder="Buscar paciente, setor ou ID..." oninput="filterAdminProcedimentos()">
+          </div>
+          <button class="btn" style="width:auto; height:56px; border-radius:14px; padding:0 16px; font-weight:600; font-size:14px; display:flex; gap:8px; align-items:center; white-space:nowrap;" onclick="exportCSV()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Exportar
+          </button>
         </div>
         
         <div class="tabs" id="admin-tabs">
@@ -534,12 +568,14 @@ function copiarId() {
   });
 }
 
+
 // --- Admin Logic ---
 async function submitLogin(e) {
   e.preventDefault();
   const pass = $('#i-pass').value;
   S.adminPass = pass;
   soundEffects.submit();
+  showAdmin(); 
   await refreshAdmin(true);
 }
 
@@ -550,6 +586,14 @@ async function refreshAdmin(fromLogin = false) {
     btn.innerHTML = '<div class="spin"></div>';
   }
 
+  $('#admin-content-procedimentos').innerHTML = '<div class="pcard-list">' + Array(3).fill(`
+    <div class="pcard">
+      <div class="top"><div class="skeleton" style="width:100px; height:20px;"></div><div class="skeleton" style="width:60px; height:20px;"></div></div>
+      <div class="skeleton" style="width:150px; height:24px; margin-top:8px;"></div>
+      <div class="info"><div class="skeleton" style="width:200px; height:16px;"></div></div>
+      <div class="desc"><div class="skeleton" style="width:100%; height:40px;"></div></div>
+    </div>`).join('') + '</div>';
+
   try {
     const res = await rpc('getAdminData', S.adminPass);
     if(res.ok) {
@@ -557,11 +601,6 @@ async function refreshAdmin(fromLogin = false) {
       S.procedimentos = res.procedimentos || [];
       S.setores = res.setores || [];
       S.logs = res.logs || [];
-      
-      $('#ui-user').classList.remove('hide');
-      $('#ui-padlock').classList.add('hide');
-      
-      switchAdminView('procedimentos');
       showView('v-admin');
     } else {
       if(fromLogin) {
@@ -683,7 +722,9 @@ function filterAdminProcedimentos() {
   $('#st-pendentes').textContent = statPend;
   $('#st-concluidas').textContent = statConcHoje;
   
+  S.filteredProc = filtered;
   renderAdminCards(filtered);
+  renderChart(filtered);
 }
 
 function renderAdminCards(rows) {
@@ -772,11 +813,28 @@ function renderSetores() {
         <td><span class="badge b-neutral" style="font-family:var(--mono)">${s[0]}</span></td>
         <td><b>${s[1]}</b></td>
         <td>${dateStr}</td>
-        <td><button class="btn sm danger" onclick="delSetor('${s[0]}', '${s[1]}', this)">Excluir</button></td>
+        <td style="display:flex; gap:8px;">
+          <button class="btn sm ghost" onclick="editSetorPrompt('${s[0]}', '${s[1]}')">Editar</button>
+          <button class="btn sm danger" onclick="delSetor('${s[0]}', '${s[1]}', this)">Excluir</button>
+        </td>
       </tr>
     `;
   }
   $('#tbl-setores').innerHTML = html;
+}
+
+async function editSetorPrompt(id, oldNome) {
+  const novoNome = prompt("Editar nome do setor:", oldNome);
+  if(!novoNome || novoNome === oldNome) return;
+  try {
+    const res = await rpc('editSetor', { id, novoNome, senha: S.adminPass });
+    if(res.ok) {
+      toast("Setor atualizado!");
+      const s = S.setores.find(x => x[0] === id);
+      if(s) s[1] = novoNome;
+      renderSetores();
+    } else { toast(res.erro, true); }
+  } catch(err) { toast('Erro na rede', true); }
 }
 
 async function handleAddSetor(e) {
@@ -843,6 +901,64 @@ function renderLogs() {
   $('#tbl-logs').innerHTML = html;
 }
 
+function exportCSV() {
+  if (!S.filteredProc || S.filteredProc.length === 0) {
+    toast("Nada para exportar.");
+    return;
+  }
+  let csv = "ID,Data,Paciente,Prontuario,Setor,Conselho,Justificativa,Status\n";
+  S.filteredProc.forEach(r => {
+    let row = [r.id, r.dateObj || '', r.nome, r.pront, r.setor, r.cons, r.just, r.status];
+    csv += row.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",") + "\n";
+  });
+  const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8;' }); 
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `procedimentos_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+let sectorChartInstance = null;
+function renderChart(filteredList) {
+  const container = document.getElementById('chart-container');
+  if(typeof Chart === 'undefined') return;
+  if(!filteredList || filteredList.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'block';
+  const ctx = document.getElementById('sectorChart').getContext('2d');
+  let counts = {};
+  filteredList.forEach(obj => {
+    const s = obj.setor;
+    counts[s] = (counts[s] || 0) + 1;
+  });
+  const labels = Object.keys(counts);
+  const data = Object.values(counts);
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#9ca3af' : '#68766e';
+  
+  if(sectorChartInstance) sectorChartInstance.destroy();
+  sectorChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{ label: 'Procedimentos', data: data, backgroundColor: '#60a5fa', borderRadius: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: textColor } },
+        y: { ticks: { color: textColor, stepSize: 1 } }
+      }
+    }
+  });
+}
+
 // --- Audio ---
 let audioCtx = null;
 function initAudio() {
@@ -879,6 +995,31 @@ const soundEffects = {
 };
 document.addEventListener('click', initAudio, { once: true });
 document.addEventListener('touchstart', initAudio, { once: true });
+
+function toggleTheme() {
+  const root = document.documentElement;
+  const isDark = root.getAttribute('data-theme') === 'dark';
+  root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('btn-theme').innerText = isDark ? '🌙' : '☀️';
+  localStorage.setItem('clinify-theme', isDark ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const btn = document.getElementById('btn-theme');
+  if(btn) btn.innerText = isDark ? '☀️' : '🌙';
+});
+
+function togglePass() {
+  const inp = document.getElementById('i-pass');
+  const icon = document.getElementById('eye-icon');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+  } else {
+    inp.type = 'password';
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+  }
+}
 </script>
 </body>
 </html>

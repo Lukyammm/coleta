@@ -226,3 +226,24 @@ function deleteSetor(payload) {
     return { ok: false, erro: error.toString() };
   }
 }
+
+function editSetor(payload) {
+  if (payload.senha !== "adm") return { ok: false, erro: "Sem permissão." };
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Setores");
+    const displayData = sheet.getDataRange().getDisplayValues();
+    let rowIndex = -1;
+    for (let i = 0; i < displayData.length; i++) {
+      if (String(displayData[i][0]).trim() === String(payload.id).trim()) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
+    if (rowIndex === -1) return { ok: false, erro: "Setor não encontrado." };
+    sheet.getRange(rowIndex, 2).setValue(payload.novoNome);
+    logAction('EDITAR_SETOR', `Setor ${payload.id} alterado para ${payload.novoNome}`);
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, erro: error.toString() };
+  }
+}
