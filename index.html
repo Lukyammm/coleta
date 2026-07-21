@@ -55,6 +55,7 @@
   --sh-lift: 0 6px 16px rgba(0,0,0,.5), 0 2px 5px rgba(0,0,0,.3);
 }
 [data-theme="dark"] .field input, [data-theme="dark"] .field select, [data-theme="dark"] .field textarea, [data-theme="dark"] .search-bar input { background: #374151; color: #f3f4f6; border-color: #4b5563; }
+[data-theme="dark"] .field input:focus, [data-theme="dark"] .field select:focus, [data-theme="dark"] .field textarea:focus, [data-theme="dark"] .search-bar input:focus { background: #1f2937; box-shadow: 0 4px 14px rgba(0,0,0,.3), inset 0 0 0 1px var(--pri); }
 [data-theme="dark"] .admin-nav { background: rgba(31, 41, 55, 0.95); border-bottom-color: #374151; }
 [data-theme="dark"] .topbar { background: rgba(17, 24, 39, 0.92); border-bottom-color: #374151; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -103,6 +104,13 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .field input:focus + label, .field textarea:focus + label, .field input:not(:placeholder-shown) + label, .field textarea:not(:placeholder-shown) + label { transform: translateY(-10px) scale(0.75); color: var(--pri); font-weight: 700; }
 .field select + label { transform: translateY(-10px) scale(0.75); color: var(--mut); font-weight: 700; }
 .field:focus-within select + label { color: var(--pri); }
+
+.custom-opts { position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--sh-lift); z-index: 50; overflow: hidden; display: flex; flex-direction: column; opacity: 1; transform: translateY(0); transition: .2s; }
+.custom-opts.hide { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+.custom-opts .opt { padding: 14px 16px; font-weight: 600; cursor: pointer; transition: .15s; color: var(--ink); border-bottom: 1px solid var(--line); }
+.custom-opts .opt:last-child { border-bottom: none; }
+.custom-opts .opt:hover { background: var(--pri-s); color: var(--pri-d); }
+[data-theme="dark"] .custom-opts .opt:hover { background: #374151; color: var(--pri); }
 
 /* ---------- buttons ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; border: 0; border-radius: 14px; padding: 14px 20px; min-height: 56px; font-weight: 700; font-size: 15.5px; transition: .2s; width: 100%; box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25); text-shadow: 0 1px 2px rgba(0,0,0,.15); }
@@ -245,10 +253,12 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
           <input type="text" id="i-pront" required autocomplete="off" inputmode="numeric" placeholder=" " oninput="this.value = this.value.replace(/\D/g, '')">
           <label>Prontuário</label>
         </div>
-        <div class="field">
+        <div class="field" id="wrap-setor">
           <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-          <select id="i-setor" required></select>
+          <input type="text" id="i-setor-display" required autocomplete="off" placeholder=" " readonly style="cursor: pointer;" onclick="document.getElementById('opts-setor').classList.toggle('hide')">
+          <input type="hidden" id="i-setor" required>
           <label>Setor</label>
+          <div id="opts-setor" class="custom-opts hide"></div>
         </div>
         <div class="field">
           <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
@@ -477,9 +487,9 @@ async function bootApp() {
   try {
     const res = await rpc('getBootData');
     if (res.ok) {
-      const sel = $('#i-setor');
-      sel.innerHTML = '<option value="" disabled selected>Selecione um Setor</option>' + 
-                      res.setores.map(s => `<option value="${s}">${s}</option>`).join('');
+      const opts = $('#opts-setor');
+      opts.innerHTML = '<div class="opt" style="color:var(--mut)" onclick="selectSetor(\'\')">Selecione um Setor</div>' + 
+                       res.setores.map(s => `<div class="opt" onclick="selectSetor('${s}')">${s}</div>`).join('');
       showView('v-pub');
     } else {
       $('#v-boot').innerHTML = '<b>Erro de Inicialização</b><br>Tente recarregar a página.';
@@ -489,6 +499,20 @@ async function bootApp() {
   }
 }
 bootApp();
+
+function selectSetor(val) {
+  $('#i-setor').value = val;
+  $('#i-setor-display').value = val;
+  $('#opts-setor').classList.add('hide');
+}
+
+document.addEventListener('click', e => {
+  const wrap = e.target.closest('#wrap-setor');
+  if (!wrap) {
+    const opts = $('#opts-setor');
+    if(opts) opts.classList.add('hide');
+  }
+});
 
 // --- UI Navigation ---
 const views = ['v-boot', 'v-pub', 'v-done', 'v-login', 'v-admin'];
