@@ -1,4 +1,5 @@
 function doGet(e) {
+  try { initDB(); } catch(e){}
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('Clinify')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover');
@@ -11,7 +12,7 @@ function initDB() {
   let sColetas = ss.getSheetByName("Coletas");
   if (!sColetas) {
     let defaultSheet = ss.getSheets()[0];
-    if (defaultSheet.getName() === "Página1" || defaultSheet.getName() === "Sheet1") {
+    if (defaultSheet.getName() === "Página1" || defaultSheet.getName() === "Sheet1" || defaultSheet.getName() === "Página 1") {
       defaultSheet.setName("Coletas");
       sColetas = defaultSheet;
     } else {
@@ -78,6 +79,7 @@ function getBootData() {
 }
 
 function processForm(formData) {
+  initDB();
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName("Coletas");
@@ -126,6 +128,7 @@ function processForm(formData) {
 }
 
 function getAdminData(senha) {
+  initDB();
   if (senha !== "adm") return { ok: false, erro: "Senha administrativa incorreta." };
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
