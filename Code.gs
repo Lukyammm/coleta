@@ -8,30 +8,36 @@ function doGet(e) {
 function initDB() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   
-  // Sheet: Coletas
-  let sColetas = ss.getSheetByName("Coletas");
-  if (!sColetas) {
-    let defaultSheet = ss.getSheets()[0];
-    if (defaultSheet.getName() === "Página1" || defaultSheet.getName() === "Sheet1" || defaultSheet.getName() === "Página 1") {
-      defaultSheet.setName("Coletas");
-      sColetas = defaultSheet;
+  // Sheet: Procedimentos (Migrating from Coletas)
+  let sProcedimentos = ss.getSheetByName("Procedimentos");
+  if (!sProcedimentos) {
+    let sColetas = ss.getSheetByName("Coletas");
+    if (sColetas) {
+      sColetas.setName("Procedimentos");
+      sProcedimentos = sColetas;
     } else {
-      sColetas = ss.insertSheet("Coletas");
+      let defaultSheet = ss.getSheets()[0];
+      if (defaultSheet.getName() === "Página1" || defaultSheet.getName() === "Sheet1" || defaultSheet.getName() === "Página 1") {
+        defaultSheet.setName("Procedimentos");
+        sProcedimentos = defaultSheet;
+      } else {
+        sProcedimentos = ss.insertSheet("Procedimentos");
+      }
     }
   }
   
   // Assegura que todas as colunas necessárias existem
   const expectedHeaders = ["ID", "Data e Hora", "Paciente", "Prontuário", "Setor", "Conselho Profissional", "Justificativa", "Status"];
-  if (sColetas.getLastRow() === 0) {
-    sColetas.appendRow(expectedHeaders);
-    sColetas.getRange(1, 1, 1, expectedHeaders.length).setFontWeight("bold").setBackground("#f4f6f3");
-    sColetas.setFrozenRows(1);
+  if (sProcedimentos.getLastRow() === 0) {
+    sProcedimentos.appendRow(expectedHeaders);
+    sProcedimentos.getRange(1, 1, 1, expectedHeaders.length).setFontWeight("bold").setBackground("#f4f6f3");
+    sProcedimentos.setFrozenRows(1);
   } else {
     // Adiciona colunas ausentes
-    let headers = sColetas.getRange(1, 1, 1, sColetas.getLastColumn()).getValues()[0];
+    let headers = sProcedimentos.getRange(1, 1, 1, sProcedimentos.getLastColumn()).getValues()[0];
     for (let h of expectedHeaders) {
       if (headers.indexOf(h) === -1 && headers.indexOf(h.replace(' e Hora', '')) === -1 && headers.indexOf(h.replace(' Profissional', '')) === -1) {
-        sColetas.getRange(1, headers.length + 1).setValue(h).setFontWeight("bold").setBackground("#f4f6f3");
+        sProcedimentos.getRange(1, headers.length + 1).setValue(h).setFontWeight("bold").setBackground("#f4f6f3");
         headers.push(h);
       }
     }
@@ -82,11 +88,11 @@ function processForm(formData) {
   initDB();
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName("Coletas");
+    const sheet = ss.getSheetByName("Procedimentos");
     if (!sheet) throw new Error("Banco de dados não inicializado.");
     
     const timestamp = new Date();
-    const id = '#' + Math.floor(timestamp.getTime()/1000).toString(16).toUpperCase();
+    const id = '#USG-' + Math.floor(10000 + Math.random() * 90000);
     
     // Mapeamento dinâmico de colunas para suportar planilhas antigas do usuário
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
@@ -120,7 +126,7 @@ function processForm(formData) {
     
     sheet.appendRow(newRow);
     
-    logAction('NOVA_COLETA', `Paciente: ${formData.nome} | ID: ${id}`);
+    logAction('NOVO_PROCEDIMENTO', `Paciente: ${formData.nome} | ID: ${id}`);
     return { ok: true, id: id };
   } catch (error) {
     return { ok: false, erro: error.toString() };
@@ -133,8 +139,8 @@ function getAdminData(senha) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    const sColetas = ss.getSheetByName("Coletas");
-    const coletas = sColetas && sColetas.getLastRow() > 0 ? sColetas.getDataRange().getDisplayValues() : [];
+    const sProcedimentos = ss.getSheetByName("Procedimentos");
+    const procedimentos = sProcedimentos && sProcedimentos.getLastRow() > 0 ? sProcedimentos.getDataRange().getDisplayValues() : [];
     
     const sSetores = ss.getSheetByName("Setores");
     const setores = sSetores && sSetores.getLastRow() > 0 ? sSetores.getDataRange().getDisplayValues() : [];
@@ -143,7 +149,7 @@ function getAdminData(senha) {
     const logs = sLogs && sLogs.getLastRow() > 0 ? sLogs.getDataRange().getDisplayValues() : [];
     
     logAction('LOGIN_ADMIN', 'Acesso autorizado ao painel.');
-    return { ok: true, coletas, setores, logs };
+    return { ok: true, procedimentos, setores, logs };
   } catch (error) {
     return { ok: false, erro: error.toString() };
   }
@@ -152,7 +158,7 @@ function getAdminData(senha) {
 function updateStatus(payload) {
   if (payload.senha !== "adm") return { ok: false, erro: "Sem permissão." };
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coletas");
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Procedimentos");
     const displayData = sheet.getDataRange().getDisplayValues();
     const headers = displayData[0];
     
@@ -176,7 +182,7 @@ function updateStatus(payload) {
     if (rowIndex === -1) return { ok: false, erro: "Registro não encontrado." };
     
     sheet.getRange(rowIndex, statusIdx + 1).setValue(payload.novoStatus);
-    logAction('ATUALIZAR_STATUS', `Coleta ${payload.id} alterada para ${payload.novoStatus}`);
+    logAction('ATUALIZAR_STATUS', `Procedimento ${payload.id} alterado para ${payload.novoStatus}`);
     return { ok: true };
   } catch (error) {
     return { ok: false, erro: error.toString() };

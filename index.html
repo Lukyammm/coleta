@@ -129,7 +129,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .b-ok { background: var(--green-s); color: var(--green); }
 .b-neutral { background: var(--line); color: var(--mut); }
 
-/* pgrid (Coletas) */
+/* pgrid (Procedimentos) */
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
 .pcard { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--pri); border-radius: 12px; padding: 16px; transition: .12s; box-shadow: var(--sh); display: flex; flex-direction: column; }
 .pcard:hover { border-color: var(--mut); transform: translateY(-2px); }
@@ -175,7 +175,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
       </div>
       <div>
         <b>Clinify</b>
-        <small>Coleta de Dados</small>
+        <small>Procedimento USG</small>
       </div>
     </a>
     <div class="top-right">
@@ -201,10 +201,10 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
   <div id="v-pub" class="hide">
     <div class="narrow card">
       <div class="header-txt">
-        <h2>Nova Coleta</h2>
+        <h2>Novo Procedimento</h2>
         <p>Preencha os dados do procedimento</p>
       </div>
-      <form id="f-coleta" onsubmit="submitColeta(event)">
+      <form id="f-proced" onsubmit="submitProced(event)">
         <div class="field">
           <label>Nome do Paciente</label>
           <input type="text" id="i-nome" required autocomplete="off" placeholder="Ex: João da Silva">
@@ -227,8 +227,8 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
           <label>Justificativa do Procedimento</label>
           <textarea id="i-just" required placeholder="Descreva brevemente a justificativa..."></textarea>
         </div>
-        <button type="submit" id="btn-coleta" class="btn">
-          <span>Registrar Coleta</span>
+        <button type="submit" id="btn-proced" class="btn">
+          <span>Registrar Procedimento</span>
         </button>
         <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:20px; font-size:11.5px; color:var(--mut);">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px; height:14px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -245,9 +245,13 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
       </div>
       <h2>Registrado com Sucesso!</h2>
-      <p class="muted" style="margin-top:8px">O código interno da sua coleta é:</p>
-      <div class="proto" id="done-id">#0000</div>
-      <button class="btn ghost block" onclick="goHome()">Nova Coleta</button>
+      <p class="muted" style="margin-top:8px">O código interno do procedimento é:</p>
+      <div class="proto" id="done-id" style="margin-bottom:12px;">#0000</div>
+      <button class="btn block" onclick="copiarId()" style="margin-bottom:12px; background:var(--pri)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px; height:16px; margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        Copiar ID
+      </button>
+      <button class="btn ghost block" onclick="goHome()">Novo Procedimento</button>
     </div>
   </div>
 
@@ -274,14 +278,14 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
   <!-- Admin Dashboard -->
   <div id="v-admin" class="hide">
     <div class="admin-nav" id="admin-main-nav">
-      <button class="active" onclick="switchAdminView('coletas')">Coletas</button>
+      <button class="active" onclick="switchAdminView('procedimentos')">Procedimentos</button>
       <button onclick="switchAdminView('setores')">Setores (Config)</button>
       <button onclick="switchAdminView('logs')">Auditoria (Logs)</button>
       <button onclick="logout()" style="margin-left:auto; color:var(--red)">Sair</button>
     </div>
     
-    <!-- Sub-view: Coletas -->
-    <div id="av-coletas">
+    <!-- Sub-view: Procedimentos -->
+    <div id="av-procedimentos">
       <div class="stats">
         <div class="stat">
           <div class="v" id="st-total">-</div>
@@ -300,7 +304,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
       <div class="controls">
         <div class="search-bar">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <input type="text" id="i-search" class="field input" placeholder="Buscar paciente, setor ou ID..." oninput="filterAdminColetas()">
+          <input type="text" id="i-search" class="field input" placeholder="Buscar paciente, setor ou ID..." oninput="filterAdminProcedimentos()">
         </div>
         
         <div class="tabs" id="admin-tabs">
@@ -310,7 +314,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         </div>
       </div>
 
-      <div id="admin-content-coletas"></div>
+      <div id="admin-content-procedimentos"></div>
     </div>
     
     <!-- Sub-view: Setores -->
@@ -380,7 +384,7 @@ const $$ = q => document.querySelectorAll(q);
 // --- State ---
 const S = { 
   adminPass: null,
-  coletas: [],
+  procedimentos: [],
   setores: [],
   logs: [],
   tab: 'Pendente',
@@ -448,7 +452,7 @@ function showView(vid) {
 }
 
 function goHome() {
-  $('#f-coleta').reset();
+  $('#f-proced').reset();
   showView('v-pub');
 }
 
@@ -476,12 +480,12 @@ function toast(msg, err) {
   setTimeout(() => t.className = '', 3000);
 }
 
-// --- Form Logic ---
-async function submitColeta(e) {
+// --- Public Logic ---
+async function submitProced(e) {
   e.preventDefault();
-  const btn = $('#btn-coleta');
+  const btn = $('#btn-proced');
   btn.disabled = true;
-  btn.innerHTML = '<div class="spin"></div>';
+  btn.innerHTML = '<span class="spin"></span> Enviando...';
   soundEffects.submit();
 
   const data = {
@@ -496,6 +500,7 @@ async function submitColeta(e) {
     const res = await rpc('processForm', data);
     if(res.ok) {
       $('#done-id').textContent = res.id;
+      S.lastId = res.id;
       soundEffects.success();
       showView('v-done');
     } else {
@@ -507,8 +512,16 @@ async function submitColeta(e) {
     toast('Falha na comunicação', true);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<span>Registrar Coleta</span>';
+    btn.innerHTML = '<span>Registrar Procedimento</span>';
   }
+}
+
+function copiarId() {
+  navigator.clipboard.writeText(S.lastId).then(() => {
+    toast('ID copiado para a área de transferência!');
+  }).catch(e => {
+    toast('Erro ao copiar ID', true);
+  });
 }
 
 // --- Admin Logic ---
@@ -531,14 +544,14 @@ async function refreshAdmin(fromLogin = false) {
     const res = await rpc('getAdminData', S.adminPass);
     if(res.ok) {
       if(fromLogin) soundEffects.success();
-      S.coletas = res.coletas || [];
+      S.procedimentos = res.procedimentos || [];
       S.setores = res.setores || [];
       S.logs = res.logs || [];
       
       $('#ui-user').classList.remove('hide');
       $('#ui-padlock').classList.add('hide');
       
-      switchAdminView('coletas');
+      switchAdminView('procedimentos');
       showView('v-admin');
     } else {
       if(fromLogin) {
@@ -564,20 +577,20 @@ async function refreshAdmin(fromLogin = false) {
 
 function switchAdminView(v) {
   $$('#admin-main-nav button').forEach(b => b.classList.remove('active'));
-  $$('#admin-main-nav button')[v==='coletas'?0:v==='setores'?1:2].classList.add('active');
+  $$('#admin-main-nav button')[v==='procedimentos'?0:v==='setores'?1:2].classList.add('active');
   
-  $('#av-coletas').classList.add('hide');
+  $('#av-procedimentos').classList.add('hide');
   $('#av-setores').classList.add('hide');
   $('#av-logs').classList.add('hide');
   
   $('#av-' + v).classList.remove('hide');
   
-  if (v === 'coletas') filterAdminColetas();
+  if (v === 'procedimentos') filterAdminProcedimentos();
   if (v === 'setores') renderSetores();
   if (v === 'logs') renderLogs();
 }
 
-// -- Coletas Logic
+// -- Procedimentos Logic
 function setTab(tabName) {
   S.tab = tabName;
   $$('#admin-tabs button').forEach(b => {
@@ -587,18 +600,18 @@ function setTab(tabName) {
     if (tabName === 'Concluído') targetText = 'Concluídas';
     if(b.textContent.trim() === targetText) b.classList.add('on');
   });
-  filterAdminColetas();
+  filterAdminProcedimentos();
 }
 
-function filterAdminColetas() {
+function filterAdminProcedimentos() {
   S.search = $('#i-search').value.toLowerCase();
   
-  if(!S.coletas || S.coletas.length <= 1) {
+  if(!S.procedimentos || S.procedimentos.length <= 1) {
     renderAdminCards([]);
     return;
   }
   
-  const headers = S.coletas[0].map(h => h.toString().toLowerCase());
+  const headers = S.procedimentos[0].map(h => h.toString().toLowerCase());
   const hIdx = (name, alt) => {
     let i = headers.indexOf(name.toLowerCase());
     if (i === -1 && alt) i = headers.indexOf(alt.toLowerCase());
@@ -622,8 +635,8 @@ function filterAdminColetas() {
   let statConcHoje = 0;
   const todayStr = new Date().toLocaleDateString('pt-BR');
 
-  for(let i = 1; i < S.coletas.length; i++) {
-    const r = S.coletas[i];
+  for(let i = 1; i < S.procedimentos.length; i++) {
+    const r = S.procedimentos[i];
     statTotal++;
     
     let status = (col.status >= 0 && r[col.status]) ? r[col.status] : 'Pendente';
@@ -638,6 +651,7 @@ function filterAdminColetas() {
     if(S.tab !== 'Todas' && status !== S.tab) continue;
     
     const obj = {
+      raw: r,
       id: col.id >= 0 ? r[col.id] : '---',
       dateObj: col.date >= 0 ? r[col.date] : null,
       nome: col.nome >= 0 ? r[col.nome] : '---',
@@ -664,12 +678,13 @@ function filterAdminColetas() {
 
 function renderAdminCards(rows) {
   if(rows.length === 0) {
-    $('#admin-content-coletas').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhum registro encontrado.</div>';
+    $('#admin-content-procedimentos').innerHTML = '<div class="card" style="text-align:center;color:var(--mut);padding:40px">Nenhum registro encontrado.</div>';
     return;
   }
   let html = '<div class="pgrid">';
   for(let i = rows.length - 1; i >= 0; i--) {
     const obj = rows[i];
+    const r = obj.raw;
     const status = obj.status;
     let badgeClass = status === 'Pendente' ? 'b-warn' : (status === 'Concluído' ? 'b-ok' : 'b-neutral');
     
@@ -698,20 +713,21 @@ function renderAdminCards(rows) {
         <div style="font-size:11px; color:var(--mut); font-weight:600; text-transform:uppercase;">📝 Conselho: ${obj.cons}</div>
         ${status === 'Pendente' ? `
           <div class="pcard-actions">
-            <button class="btn sm success" onclick="changeStatus('${obj.id}', 'Concluído', this)">✔ Concluir</button>
-            <button class="btn sm ghost" onclick="changeStatus('${obj.id}', 'Cancelado', this)">Cancelar</button>
+            <button class="btn ghost btn-sm" style="color:var(--red)" onclick="changeStatus('${r[0]}', 'Cancelado', this)">Cancelar</button>
+            <button class="btn btn-sm" onclick="changeStatus('${r[0]}', 'Concluído', this)">Concluir</button>
           </div>
         ` : ''}
       </div>
     `;
   }
   html += '</div>';
-  $('#admin-content-coletas').innerHTML = html;
+  $('#admin-content-procedimentos').innerHTML = html;
 }
 
 async function changeStatus(id, newStatus, btnEl) {
-  const isCancel = newStatus === 'Cancelado';
-  if(!(await uiConfirm(isCancel ? 'Cancelar Coleta?' : 'Concluir Coleta?', `Tem certeza que deseja marcar o registro ${id} como ${newStatus}?`, isCancel))) return;
+  const confirmMsg = newStatus === 'Cancelado' ? `Deseja realmente cancelar o procedimento ${id}?` : `Deseja marcar o procedimento ${id} como Concluído?`;
+  const confirm = await uiConfirm('Atenção', confirmMsg, newStatus === 'Cancelado');
+  if(!confirm) return;
   
   const original = btnEl.innerHTML;
   btnEl.innerHTML = '<div class="spin"></div>'; btnEl.disabled = true;
@@ -720,10 +736,10 @@ async function changeStatus(id, newStatus, btnEl) {
     if(res.ok) {
       toast(`Atualizado para ${newStatus}`);
       soundEffects.success();
-      const row = S.coletas.find(r => r[0] === id);
+      const row = S.procedimentos.find(r => r[0] === id);
       if(row) row[7] = newStatus;
-      S.logs.push([new Date().toLocaleString(), 'ATUALIZAR_STATUS', `Coleta ${id} alterada para ${newStatus}`]);
-      filterAdminColetas();
+      S.logs.push([new Date().toLocaleString(), 'ATUALIZAR_STATUS', `Procedimento ${id} alterado para ${newStatus}`]);
+      filterAdminProcedimentos();
     } else {
       toast(res.erro, true); soundEffects.error();
     }
@@ -778,7 +794,7 @@ async function handleAddSetor(e) {
 }
 
 async function delSetor(id, nome, btnEl) {
-  if(!(await uiConfirm('Excluir Setor?', `Deseja excluir "${nome}"? Isso não apagará as coletas já feitas com ele.`, true))) return;
+  if(!(await uiConfirm('Excluir Setor?', `Deseja excluir "${nome}"? Isso não apagará os procedimentos já feitos com ele.`, true))) return;
   const original = btnEl.innerHTML;
   btnEl.disabled = true; btnEl.innerHTML = '<div class="spin"></div>';
   try {
