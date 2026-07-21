@@ -72,10 +72,10 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 /* ---------- forms ---------- */
 .field { margin-bottom: 18px; }
 .field > label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
-.field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-height: 48px; background: #fff; transition: border-color .15s, box-shadow .15s; -webkit-appearance: none; }
+.field input, .field select, .field textarea, .search-bar input { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-height: 48px; background: #fff; transition: border-color .15s, box-shadow .15s; -webkit-appearance: none; }
 .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2368766e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
 .field textarea { min-height: 100px; resize: vertical; }
-.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--pri); outline: none; box-shadow: 0 0 0 3px rgba(43, 108, 176, .15); }
+.field input:focus, .field select:focus, .field textarea:focus, .search-bar input:focus { border-color: var(--pri); outline: none; box-shadow: 0 0 0 3px rgba(43, 108, 176, .15); }
 
 /* ---------- buttons ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--pri); color: #fff; border: 1px solid var(--pri); border-radius: 12px; padding: 14px 20px; min-height: 52px; font-weight: 600; font-size: 15px; transition: .15s; width: 100%; }
@@ -295,7 +295,7 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
         </div>
         
         <div class="tabs" id="admin-tabs">
-          <button class="on" onclick="setTab('Pendentes')">Pendentes</button>
+          <button class="on" onclick="setTab('Pendente')">Pendentes</button>
           <button onclick="setTab('Concluído')">Concluídas</button>
           <button onclick="setTab('Todas')">Todas</button>
         </div>
@@ -362,7 +362,7 @@ const S = {
   coletas: [],
   setores: [],
   logs: [],
-  tab: 'Pendentes',
+  tab: 'Pendente',
   search: ''
 };
 
@@ -537,7 +537,10 @@ function setTab(tabName) {
   S.tab = tabName;
   $$('#admin-tabs button').forEach(b => {
     b.classList.remove('on');
-    if(b.textContent.trim() === (tabName === 'Concluído' ? 'Concluídas' : tabName)) b.classList.add('on');
+    let targetText = tabName;
+    if (tabName === 'Pendente') targetText = 'Pendentes';
+    if (tabName === 'Concluído') targetText = 'Concluídas';
+    if(b.textContent.trim() === targetText) b.classList.add('on');
   });
   filterAdminColetas();
 }
