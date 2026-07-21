@@ -69,7 +69,7 @@ h1, h2, h3 { font-family: var(--disp); line-height: 1.2; letter-spacing: -.01em;
 
 /* ---------- topbar ---------- */
 .topbar { position: sticky; top: 0; z-index: 40; background: rgba(244,246,243,.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding-top: var(--sa-t); }
-.topbar .in { max-width: 800px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 12px max(18px, var(--sa-r)) 12px max(18px, var(--sa-l)); }
+.topbar .in { max-width: 800px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 6px max(18px, var(--sa-r)) 6px max(18px, var(--sa-l)); }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
 .brand .dot { width: 34px; height: 34px; color: var(--pri); display: grid; place-items: center; background: var(--pri-s); border-radius: 8px; }
 .brand .dot svg { width: 20px; height: 20px; stroke-width: 2.2; }
@@ -77,6 +77,7 @@ h1, h2, h3 { font-family: var(--disp); line-height: 1.2; letter-spacing: -.01em;
 .brand small { display: block; color: var(--mut); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; margin-top: -2px; }
 .top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .iconbtn { background: none; border: 0; padding: 8px; border-radius: 10px; color: var(--mut); display: grid; place-items: center; transition: .15s; min-width: var(--tap); min-height: var(--tap); }
+.topbar .iconbtn { min-width: 38px; min-height: 38px; padding: 6px; }
 .iconbtn:hover { background: var(--card); color: var(--ink); box-shadow: var(--sh); }
 .iconbtn svg { width: 20px; height: 20px; stroke-width: 2; }
 .chip { background: var(--card); border: 1px solid var(--line); padding: 4px 10px 4px 6px; border-radius: 99px; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; box-shadow: var(--sh); }
