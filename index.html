@@ -146,15 +146,14 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 .admin-nav button.active { color: var(--pri); border-bottom-color: var(--pri); }
 
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.stat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--sh); }
-.stat .v { font-family: var(--disp); font-weight: 700; font-size: clamp(24px, 6vw, 32px); line-height: 1.1; color: var(--pri); }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--sh); }
+.stat .v { font-family: var(--disp); font-weight: 700; font-size: clamp(24px, 6vw, 32px); line-height: 1.1; color: var(--pri); margin-bottom: 4px; }
 .stat .l { color: var(--mut); font-size: 12.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; margin-top: 4px; }
 
 .controls { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-.tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-.tabs::-webkit-scrollbar { display: none; }
+.tabs { display: flex; gap: 8px; }
 .tabs button { border: 0; background: none; padding: 8px 16px; min-height: var(--tap); border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--mut); white-space: nowrap; transition: .12s; }
-.tabs button.on { background: var(--ink); color: #fff; }
+.tabs button.on { background: var(--ink); color: var(--paper); }
 .tabs button:hover:not(.on) { background: var(--card); }
 .search-bar { position: relative; width: 100%; }
 .search-bar input { padding-left: 40px; margin-bottom:0; }
