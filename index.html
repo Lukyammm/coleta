@@ -995,35 +995,69 @@ function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if(audioCtx.state === 'suspended') audioCtx.resume();
 }
-function playTone(freq, type, duration, vol) {
-  if(!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duration);
-}
+
 const soundEffects = {
+  // Retorno tátil super rápido (como o Taptic Engine da Apple)
+  tick: () => {
+    if(!audioCtx) return;
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, t);
+    osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.03); 
+    gain.gain.setValueAtTime(0.15, t); // Volume sutil
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.03);
+  },
+  // Ação primária (ex: Enviar) - Duplo tick "Click-Clack"
   submit: () => {
-    playTone(440, 'triangle', 0.1, 0.1);
-    setTimeout(() => playTone(554, 'triangle', 0.2, 0.1), 100);
+    soundEffects.tick();
+    setTimeout(soundEffects.tick, 60);
   },
+  // Sucesso - Acorde moderno e suave (Swell)
   success: () => {
-    playTone(523.25, 'sine', 0.1, 0.1); 
-    setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 150); 
-    setTimeout(() => playTone(783.99, 'sine', 0.3, 0.1), 300); 
+    if(!audioCtx) return;
+    const t = audioCtx.currentTime;
+    [523.25, 659.25, 783.99].forEach((freq, i) => { // Dó Maior
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.setTargetAtTime(0.1, t + (i*0.06), 0.1); 
+      gain.gain.setTargetAtTime(0, t + 0.4 + (i*0.06), 0.2);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t); osc.stop(t + 1.5);
+    });
   },
+  // Erro/Aviso - "Thud" grave e macio
   error: () => {
-    playTone(300, 'square', 0.2, 0.1);
-    setTimeout(() => playTone(250, 'square', 0.3, 0.1), 200);
+    if(!audioCtx) return;
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(100, t);
+    osc.frequency.exponentialRampToValueAtTime(30, t + 0.15);
+    gain.gain.setValueAtTime(0.3, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.2);
   }
 };
-document.addEventListener('click', initAudio, { once: true });
+
+document.addEventListener('pointerdown', (e) => {
+  initAudio();
+  const el = e.target.closest('button, .opt, input, textarea, .iconbtn, .brand');
+  if (el) {
+    const isPrimary = el.type === 'submit' || el.classList.contains('success') || el.classList.contains('danger');
+    if (!isPrimary && el.id !== 'btn-proced' && el.id !== 'btn-login') {
+      soundEffects.tick(); // Haptic tick instantâneo no toque
+    }
+  }
+});
 document.addEventListener('touchstart', initAudio, { once: true });
 
 function toggleTheme() {
