@@ -24,7 +24,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -40,6 +40,22 @@
       overflow-x: hidden;
     }
 
+    /* Admin Padlock */
+    #admin-padlock {
+      position: absolute;
+      top: env(safe-area-inset-top, 20px);
+      right: 20px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+    #admin-padlock:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
     /* Glassmorphism Container */
     .container {
       width: 100%;
@@ -53,6 +69,24 @@
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
       transform: translateY(0);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Dashboard Container (wider) */
+    .dashboard-container {
+      max-width: 800px;
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    .dashboard-container.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #app-container {
+      display: block;
     }
 
     .header {
@@ -133,6 +167,13 @@
       box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
     }
 
+    button.btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      box-shadow: inset 0 0 0 2px var(--primary);
+      margin-top: 10px;
+    }
+
     button:active {
       transform: scale(0.97);
     }
@@ -140,6 +181,10 @@
     button:hover {
       background: var(--primary-hover);
       box-shadow: 0 6px 8px rgba(49, 130, 206, 0.3);
+    }
+    
+    button.btn-secondary:hover {
+      background: rgba(49, 130, 206, 0.1);
     }
 
     button:disabled {
@@ -158,6 +203,13 @@
       border-top-color: white;
       animation: spin 1s ease-in-out infinite;
       margin-left: 10px;
+    }
+
+    .spinner.dark {
+      border: 3px solid rgba(49, 130, 206, 0.2);
+      border-top-color: var(--primary);
+      margin: 20px auto;
+      display: block;
     }
 
     @keyframes spin {
@@ -191,10 +243,84 @@
       background: var(--error);
     }
 
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
+    
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      width: 90%;
+      max-width: 320px;
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.show .modal-content {
+      transform: scale(1);
+    }
+
+    /* Table styles */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.8);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    th {
+      background: rgba(49, 130, 206, 0.1);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
   </style>
 </head>
 <body>
 
+  <div id="admin-padlock" title="Acesso Administrativo">🔒</div>
+
+  <!-- Main App View -->
   <div class="container" id="app-container">
     <div class="header">
       <h1>Registro de Coleta</h1>
@@ -229,6 +355,40 @@
     </form>
   </div>
 
+  <!-- Dashboard View -->
+  <div class="container dashboard-container" id="dashboard-container">
+    <div class="header">
+      <h1>Dashboard Administrativo</h1>
+      <p>Registros Coletados</p>
+    </div>
+    
+    <div id="dashboard-content">
+      <div class="spinner dark" id="dashboard-spinner" style="display: none;"></div>
+      <div class="table-responsive" id="table-wrapper"></div>
+    </div>
+
+    <button type="button" class="btn-secondary" id="logoutBtn" style="margin-top: 20px;">Sair / Voltar</button>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+      <div class="header" style="margin-bottom: 16px;">
+        <h2 style="font-size: 1.2rem; color: var(--primary);">Área Restrita</h2>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="password" id="adminPassword" placeholder="Senha do Administrador" required>
+        </div>
+        <button type="submit" id="loginSubmitBtn">
+          <span id="loginBtnText">Acessar</span>
+          <div class="spinner" id="loginSpinner"></div>
+        </button>
+        <button type="button" class="btn-secondary" id="closeModalBtn">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
   <div class="toast" id="toast">Sucesso!</div>
 
   <script>
@@ -244,7 +404,6 @@
       }
     }
 
-    // Generate subtle synths to avoid heavy base64 assets
     function playTone(freq, type, duration, vol) {
       if(!audioCtx) return;
       const osc = audioCtx.createOscillator();
@@ -260,15 +419,15 @@
     }
 
     const soundEffects = {
-      focus: () => playTone(800, 'sine', 0.1, 0.05), // Subtle "pop" for inputs
+      focus: () => playTone(800, 'sine', 0.1, 0.05),
       submit: () => {
         playTone(440, 'triangle', 0.1, 0.1);
         setTimeout(() => playTone(554, 'triangle', 0.2, 0.1), 100);
       },
       success: () => {
-        playTone(523.25, 'sine', 0.1, 0.1); // C5
-        setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 150); // E5
-        setTimeout(() => playTone(783.99, 'sine', 0.3, 0.1), 300); // G5
+        playTone(523.25, 'sine', 0.1, 0.1); 
+        setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 150); 
+        setTimeout(() => playTone(783.99, 'sine', 0.3, 0.1), 300); 
       },
       error: () => {
         playTone(300, 'square', 0.2, 0.1);
@@ -276,7 +435,6 @@
       }
     };
 
-    // Attach listeners for UX
     document.addEventListener('click', initAudio, { once: true });
     document.addEventListener('touchstart', initAudio, { once: true });
 
@@ -285,11 +443,14 @@
       input.addEventListener('focus', () => {
         initAudio();
         soundEffects.focus();
-        // Visual psychology: highlight active label
-        input.previousElementSibling.style.color = 'var(--primary)';
+        if(input.previousElementSibling) {
+          input.previousElementSibling.style.color = 'var(--primary)';
+        }
       });
       input.addEventListener('blur', () => {
-        input.previousElementSibling.style.color = 'var(--text-main)';
+        if(input.previousElementSibling) {
+          input.previousElementSibling.style.color = 'var(--text-main)';
+        }
       });
     });
 
@@ -300,6 +461,15 @@
     const toast = document.getElementById('toast');
     const container = document.getElementById('app-container');
 
+    const adminPadlock = document.getElementById('admin-padlock');
+    const loginModal = document.getElementById('loginModal');
+    const loginForm = document.getElementById('loginForm');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const dashboardContainer = document.getElementById('dashboard-container');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const tableWrapper = document.getElementById('table-wrapper');
+    const dashboardSpinner = document.getElementById('dashboard-spinner');
+
     function showToast(message, isError = false) {
       toast.textContent = message;
       toast.className = isError ? 'toast error show' : 'toast show';
@@ -308,19 +478,17 @@
       }, 3000);
     }
 
+    // --- Formulário Principal ---
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      
       initAudio();
       soundEffects.submit();
 
-      // UI Loading State
       submitBtn.disabled = true;
       btnText.textContent = "Enviando...";
       spinner.style.display = "block";
       container.style.transform = "scale(0.98)";
 
-      // Collect data
       const formData = {
         nome: document.getElementById('nome').value,
         prontuario: document.getElementById('prontuario').value,
@@ -328,7 +496,6 @@
         justificativa: document.getElementById('justificativa').value
       };
 
-      // Call Google Apps Script Backend
       google.script.run
         .withSuccessHandler((response) => {
           submitBtn.disabled = false;
@@ -355,6 +522,106 @@
         })
         .processForm(formData);
     });
+
+    // --- Lógica Administrativa ---
+    adminPadlock.addEventListener('click', () => {
+      initAudio();
+      soundEffects.focus();
+      loginModal.classList.add('show');
+      document.getElementById('adminPassword').focus();
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      loginModal.classList.remove('show');
+      loginForm.reset();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      dashboardContainer.classList.remove('visible');
+      setTimeout(() => {
+        container.style.display = 'block';
+        adminPadlock.style.display = 'block';
+        // force reflow
+        void container.offsetWidth;
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+      }, 300);
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      initAudio();
+      soundEffects.submit();
+
+      const pass = document.getElementById('adminPassword').value;
+      const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+      const loginBtnText = document.getElementById('loginBtnText');
+      const loginSpinner = document.getElementById('loginSpinner');
+
+      loginSubmitBtn.disabled = true;
+      loginBtnText.textContent = "Verificando...";
+      loginSpinner.style.display = "block";
+
+      google.script.run
+        .withSuccessHandler((response) => {
+          loginSubmitBtn.disabled = false;
+          loginBtnText.textContent = "Acessar";
+          loginSpinner.style.display = "none";
+
+          if(response.success) {
+            soundEffects.success();
+            loginModal.classList.remove('show');
+            loginForm.reset();
+            
+            // Transição para Dashboard
+            container.style.display = 'none';
+            adminPadlock.style.display = 'none';
+            dashboardContainer.classList.add('visible');
+            
+            renderTable(response.data);
+          } else {
+            soundEffects.error();
+            showToast(response.message, true);
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPassword').focus();
+          }
+        })
+        .withFailureHandler((error) => {
+          loginSubmitBtn.disabled = false;
+          loginBtnText.textContent = "Acessar";
+          loginSpinner.style.display = "none";
+          soundEffects.error();
+          showToast("Erro ao conectar.", true);
+        })
+        .getRegistros(pass);
+    });
+
+    function renderTable(data) {
+      if(!data || data.length === 0) {
+        tableWrapper.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--text-muted);'>Nenhum registro encontrado.</p>";
+        return;
+      }
+
+      let html = "<table>";
+      // Headers
+      html += "<thead><tr>";
+      data[0].forEach(header => {
+        html += `<th>${header}</th>`;
+      });
+      html += "</tr></thead><tbody>";
+
+      // Rows
+      for(let i = 1; i < data.length; i++) {
+        html += "<tr>";
+        data[i].forEach(cell => {
+          html += `<td>${cell}</td>`;
+        });
+        html += "</tr>";
+      }
+
+      html += "</tbody></table>";
+      tableWrapper.innerHTML = html;
+    }
   </script>
 </body>
 </html>

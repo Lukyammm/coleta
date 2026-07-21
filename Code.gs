@@ -44,3 +44,21 @@ function processForm(formData) {
     return { success: false, message: error.toString() };
   }
 }
+
+function getRegistros(senha) {
+  // Simple backend authentication
+  if (senha !== "adm") {
+    return { success: false, message: "Senha incorreta." };
+  }
+  
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getActiveSheet();
+    const data = sheet.getDataRange().getDisplayValues();
+    
+    // Return all data (including headers)
+    return { success: true, data: data };
+  } catch (error) {
+    return { success: false, message: error.toString() };
+  }
+}
