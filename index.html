@@ -204,14 +204,8 @@ main { max-width: 800px; margin: 0 auto; padding: 24px max(18px, var(--sa-r)) ca
 
 <div class="topbar">
   <div class="in">
-    <a href="#" class="brand" onclick="goHome()">
-      <div class="dot">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      </div>
-      <div>
-        <b>Clinify</b>
-        <small>Gestão de Procedimentos</small>
-      </div>
+    <a href="#" class="brand" onclick="goHome()" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+      <b style="font-size: 20px; letter-spacing: -0.02em;">Clinify</b>
     </a>
     <div class="top-right" style="display:flex; align-items:center; gap:8px;">
       <button onclick="toggleTheme()" id="btn-theme" class="iconbtn" title="Alternar Tema">
@@ -1002,12 +996,20 @@ function renderChart(filteredList) {
 // --- Audio ---
 let audioCtx = null;
 function initAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // iOS unlock hack: play silent sound immediately on first gesture
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0;
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.01);
+  }
   if(audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 const soundEffects = {
-  // Retorno tátil super rápido (como o Taptic Engine da Apple)
+  // Retorno tátil super rápido e mais presente
   tick: () => {
     if(!audioCtx) return;
     const t = audioCtx.currentTime;
@@ -1015,46 +1017,55 @@ const soundEffects = {
     const gain = audioCtx.createGain();
     osc.type = 'sine';
     osc.frequency.setValueAtTime(150, t);
-    osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.03); 
-    gain.gain.setValueAtTime(0.15, t); // Volume sutil
-    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+    osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.05); 
+    gain.gain.setValueAtTime(0.4, t); // Volume mais presente
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
     osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(t); osc.stop(t + 0.03);
+    osc.start(t); osc.stop(t + 0.05);
   },
-  // Ação primária (ex: Enviar) - Duplo tick "Click-Clack"
+  // Ação primária (ex: Enviar) - Som moderno de confirmação (ping macio)
   submit: () => {
-    soundEffects.tick();
-    setTimeout(soundEffects.tick, 60);
+    if(!audioCtx) return;
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.exponentialRampToValueAtTime(300, t + 0.1); 
+    gain.gain.setValueAtTime(0.3, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.1);
   },
-  // Sucesso - Acorde moderno e suave (Swell)
+  // Sucesso - Acorde moderno e suave (Swell) mais nítido
   success: () => {
     if(!audioCtx) return;
     const t = audioCtx.currentTime;
-    [523.25, 659.25, 783.99].forEach((freq, i) => { // Dó Maior
+    [523.25, 659.25, 783.99].forEach((freq, i) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(0, t);
-      gain.gain.setTargetAtTime(0.1, t + (i*0.06), 0.1); 
+      gain.gain.setTargetAtTime(0.2, t + (i*0.06), 0.1); // Mais audível
       gain.gain.setTargetAtTime(0, t + 0.4 + (i*0.06), 0.2);
       osc.connect(gain); gain.connect(audioCtx.destination);
       osc.start(t); osc.stop(t + 1.5);
     });
   },
-  // Erro/Aviso - "Thud" grave e macio
+  // Erro/Aviso - "Thud" mais perceptível
   error: () => {
     if(!audioCtx) return;
     const t = audioCtx.currentTime;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(100, t);
-    osc.frequency.exponentialRampToValueAtTime(30, t + 0.15);
-    gain.gain.setValueAtTime(0.3, t);
-    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+    osc.frequency.setValueAtTime(120, t);
+    osc.frequency.exponentialRampToValueAtTime(30, t + 0.2);
+    gain.gain.setValueAtTime(0.6, t); // Grave precisa de mais ganho pra ser ouvido em celular
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
     osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(t); osc.stop(t + 0.2);
+    osc.start(t); osc.stop(t + 0.25);
   }
 };
 
