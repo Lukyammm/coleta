@@ -150,8 +150,8 @@ function updateStatus(payload) {
   if (payload.senha !== "adm") return { ok: false, erro: "Sem permissão." };
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coletas");
-    const data = sheet.getDataRange().getValues();
-    const headers = data[0];
+    const displayData = sheet.getDataRange().getDisplayValues();
+    const headers = displayData[0];
     
     let idIdx = headers.indexOf("ID");
     if (idIdx === -1) idIdx = 0; // fallback se o usuário não tem coluna ID
@@ -163,8 +163,8 @@ function updateStatus(payload) {
     }
     
     let rowIndex = -1;
-    for (let i = 1; i < data.length; i++) {
-      if (data[i][idIdx] === payload.id) {
+    for (let i = 1; i < displayData.length; i++) {
+      if (String(displayData[i][idIdx]).trim() === String(payload.id).trim()) {
         rowIndex = i + 1;
         break;
       }
@@ -197,14 +197,14 @@ function deleteSetor(payload) {
   if (payload.senha !== "adm") return { ok: false, erro: "Sem permissão." };
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Setores");
-    const data = sheet.getDataRange().getValues();
+    const displayData = sheet.getDataRange().getDisplayValues();
     let rowIndex = -1;
     let nome = "";
     
-    for (let i = 0; i < data.length; i++) {
-      if (data[i][0] === payload.id) {
+    for (let i = 0; i < displayData.length; i++) {
+      if (String(displayData[i][0]).trim() === String(payload.id).trim()) {
         rowIndex = i + 1;
-        nome = data[i][1];
+        nome = displayData[i][1];
         break;
       }
     }
